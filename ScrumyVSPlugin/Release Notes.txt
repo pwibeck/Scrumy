@@ -1,3 +1,9 @@
+1.0.6
+Added support for chaning fonts
+
+1.0.5
+Added possibility to change layout on printed items
+
 1.0.4
 Added support for Dynamics SE Hotfix request printing
 Fix crashed when related item where of type Hyper link
