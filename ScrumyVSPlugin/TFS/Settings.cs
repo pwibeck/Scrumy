@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace PeterWibeck.ScrumyVSPlugin.TFS
@@ -29,7 +30,19 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
 
         public Collection<WorkItemPrintData> PrintWorkItems { get; set; }
 
-        public string Document { get; set; }
+        private string document;
+        public string Document 
+        {
+            get { return this.document; }
+            set
+            {
+                TextReader textReader = new StringReader(value);
+                XDocument doc = XDocument.Load(textReader);
+                LoadFonts(doc);
+                LoadItems(doc);
+                this.document = value;
+            }
+        }
 
         protected void Init(IsolatedStorageFileAdapter.StoreType store)
         {
@@ -87,7 +100,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
             {
                 var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
                                         new XElement("settings",
-                                                     new object[] {CreateFontsElement(), CreateWorkItemsElement()}));
+                                                     new object[] {new XAttribute("version", "1"), CreateFontsElement(), CreateWorkItemsElement()}));
                 doc.Save(stream.BaseStream);
             }
         }
@@ -148,7 +161,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                         XDocument doc = XDocument.Load(stream.BaseStream);
                         LoadFonts(doc);
                         LoadItems(doc);
-                        Document = doc.ToString();
+                        document = doc.ToString();
                     }
                     catch (SettingsLoadException)
                     {
@@ -348,7 +361,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                 XDocument.Load(assembly.GetManifestResourceStream("PeterWibeck.ScrumyVSPlugin.TFS.SettingsDefault.xml"));
             LoadFonts(doc);
             LoadItems(doc);
-            Document = doc.ToString();
+            document = doc.ToString();
         }
 
         //public override bool Equals(object obj)

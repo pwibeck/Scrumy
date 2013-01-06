@@ -125,37 +125,58 @@ namespace PeterWibeck.ScrumyVSPlugin
             var copyOfSettings = new Settings();
             copyOfSettings.LoadSettings();
 
-            foreach (WorkItemPrintData printWorkItem in copyOfSettings.PrintWorkItems)
+            bool settingsOK = false;
+            if (string.Compare(AdvanceDocument.Text, copyOfSettings.Document, StringComparison.OrdinalIgnoreCase) == 0)
             {
-                foreach (Control control in from TabPage tabPage in TabControl.TabPages where tabPage.Name.Equals(printWorkItem.Type) from Control control in tabPage.Controls select control)
+                foreach (WorkItemPrintData printWorkItem in copyOfSettings.PrintWorkItems)
                 {
-                    if (control.Name.Equals("BGColorPanel"))
+                    foreach (Control control in from TabPage tabPage in TabControl.TabPages
+                                                where tabPage.Name.Equals(printWorkItem.Type)
+                                                from Control control in tabPage.Controls
+                                                select control)
                     {
-                        printWorkItem.BackGroundColor = control.BackColor.ToArgb();
-                    }
+                        if (control.Name.Equals("BGColorPanel"))
+                        {
+                            printWorkItem.BackGroundColor = control.BackColor.ToArgb();
+                        }
 
-                    if (control.Name.Equals("TextColorPanel"))
-                    {
-                        printWorkItem.TextColor = control.BackColor.ToArgb();
-                    }
+                        if (control.Name.Equals("TextColorPanel"))
+                        {
+                            printWorkItem.TextColor = control.BackColor.ToArgb();
+                        }
 
-                    if (control.Name.Equals("RowRawData"))
-                    {
-                        printWorkItem.RowsRawData = control.Text;
+                        if (control.Name.Equals("RowRawData"))
+                        {
+                            printWorkItem.RowsRawData = control.Text;
+                        }
                     }
                 }
-            }
 
-            bool settingsOK = false;
-            try
-            {
-                copyOfSettings.SaveSettings();
-                copyOfSettings.LoadSettings();
-                settingsOK = true;
+                try
+                {
+                    copyOfSettings.SaveSettings();
+                    copyOfSettings.LoadSettings();
+                    settingsOK = true;
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show("Error:" + exception.Message, "Error when saving data", MessageBoxButtons.OK);
+                }
             }
-            catch (Exception exception)
+            else
             {
-                MessageBox.Show("Error:" + exception.Message, "Error when saving data", MessageBoxButtons.OK);
+                try
+                {
+                    copyOfSettings.Document = AdvanceDocument.Text;
+                    copyOfSettings.SaveSettings();
+                    copyOfSettings.LoadSettings();
+                    settingsOK = true;
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show("Error:" + exception.Message, "Error when saving data", MessageBoxButtons.OK);
+                }
+                
             }
 
             if (settingsOK)
