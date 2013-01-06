@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<settings>
+  <fonts>
+    <font name="HeadLine">
+      <familyName>Calibri (Body)</familyName>
+      <size>15</size>
+      <style>Regular</style>
+    </font>
+    <font name="Title">
+      <familyName>Calibri (Body)</familyName>
+      <size>18</size>
+      <style>Bold</style>
+    </font>
+    <font name="DeliverableFont">
+      <familyName>Calibri (Body)</familyName>
+      <size>10</size>
+      <style>Regular</style>
+    </font>
+    <font name="CreationDateFont">
+      <familyName>Calibri (Body)</familyName>
+      <size>20</size>
+      <style>Regular</style>
+    </font>
+  </fonts>
+  <workItems>
+    <item type="Deliverable" bgColor="-8323200" txtColor="-16777216">
+      <layout>
+        <row font="HeadLine">
+          <element type="text">Deliverable </element>
+          <element type="field">System.Id</element>
+          <element type="text"> Effort:</element>
+          <element type="field">Microsoft.VSTS.Scheduling.Effort</element>
+        </row>
+        <row font="Title">
+          <element type="field">System.Title</element>
+        </row>
+      </layout>
+    </item>
+    <item type="Task" bgColor="-8323073" txtColor="-16777216">
+      <layout>
+        <row font="HeadLine">
+          <element type="text">Task:</element>
+          <element type="field">System.Id</element>
+        </row>
+        <row font="DeliverableFont">
+          <element type="text">Deliverable:</element>
+          <element type="relatedItem" maxLenght="70" searchField ="System.WorkItemType" searchData="Deliverable" resultField="System.Title"/>
+        </row>
+        <row font="Title">
+          <element type="field">System.Title</element>
+        </row>
+      </layout>
+    </item>
+    <item type="Bug" bgColor="-32640" txtColor="-16777216">
+      <layout>
+        <row font="HeadLine">
+          <element type="field">System.Id</element>
+          <element type="text"> P:</element>
+          <element type="field">Microsoft.VSTS.Common.Priority</element>
+          <element type="text"> S:</element>
+          <element type="field">Microsoft.VSTS.Common.Severity</element>
+          <element type="text"> </element>
+          <element type="field" maxLenght="15">Microsoft.VSTS.Common.Issue</element>
+        </row>
+        <row font="Title">
+          <element type="field">System.Title</element>
+        </row>
+        <row font="CreationDateFont" locationY="Bottom">
+          <element type="field" dateFormatting="d MMM">System.CreatedDate</element>
+        </row>
+      </layout>
+    </item>
+  </workItems>
+</settings>
