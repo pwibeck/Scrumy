@@ -36,6 +36,7 @@
             this.AdvancedTab = new System.Windows.Forms.TabPage();
             this.btnReset = new System.Windows.Forms.Button();
             this.AdvanceDocument = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.TabControl.SuspendLayout();
             this.AdvancedTab.SuspendLayout();
             this.SuspendLayout();
@@ -82,6 +83,7 @@
             // 
             // AdvancedTab
             // 
+            this.AdvancedTab.Controls.Add(this.label1);
             this.AdvancedTab.Controls.Add(this.btnReset);
             this.AdvancedTab.Controls.Add(this.AdvanceDocument);
             this.AdvancedTab.Location = new System.Drawing.Point(4, 22);
@@ -112,6 +114,15 @@
             this.AdvanceDocument.TabIndex = 0;
             this.AdvanceDocument.WordWrap = false;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 7);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(221, 13);
+            this.label1.TabIndex = 62;
+            this.label1.Text = "Any change here will overid all other changes";
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -139,5 +150,6 @@
         private System.Windows.Forms.TabPage AdvancedTab;
         private System.Windows.Forms.TextBox AdvanceDocument;
         private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.Label label1;
     }
 }
