@@ -29,7 +29,7 @@ namespace PeterWibeck.ScrumyVSPlugin
     [PackageRegistration(UseManagedResourcesOnly = true)]
     // This attribute is used to register the information needed to show this package
     // in the Help/About dialog of Visual Studio.
-    [InstalledProductRegistration("#110", "#112", "1.0.5", IconResourceID = 400)]
+    [InstalledProductRegistration("#110", "#112", "1.0.6", IconResourceID = 400)]
     // This attribute is needed to let the shell know that this package exposes some menus.
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideAutoLoad("{e13eedef-b531-4afe-9725-28a69fa4f896}")]

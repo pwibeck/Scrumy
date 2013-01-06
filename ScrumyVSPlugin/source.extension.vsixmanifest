@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="b80ab99e-b18e-4f5a-86b8-4fb376b1e0c0" Version="1.0.5" Language="en-US" Publisher="Peter Wibeck" />
+    <Identity Id="b80ab99e-b18e-4f5a-86b8-4fb376b1e0c0" Version="1.0.6" Language="en-US" Publisher="Peter Wibeck" />
     <DisplayName>ScrumyVSPlugin</DisplayName>
     <Description>Scrumy gives you the possibility to print workitem wall cards for kanban or any other progress board</Description>
     <License>License.txt</License>
