@@ -13,6 +13,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
     public class Settings
     {
         private const string SettingFileName = "ScrumySettings.xml";
+        private string document;
         private IsolatedStorageFileAdapter.StoreType storeType;
 
         public Settings()
@@ -29,17 +30,16 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
 
         public Collection<WorkItemPrintData> PrintWorkItems { get; set; }
 
-        private string document;
-        public string Document 
+        public string Document
         {
-            get { return this.document; }
+            get { return document; }
             set
             {
                 TextReader textReader = new StringReader(value);
                 XDocument doc = XDocument.Load(textReader);
                 LoadFonts(doc);
                 LoadItems(doc);
-                this.document = value;
+                document = value;
             }
         }
 
@@ -67,12 +67,16 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
             {
                 var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
                                         new XElement("settings",
-                                                     new object[] {new XAttribute("version", "1"), CreateFontsElement(), CreateXMLWorkItemsElement()}));
+                                                     new object[]
+                                                         {
+                                                             new XAttribute("version", "1"), CreateFontsElement(),
+                                                             CreateXmlWorkItemsElement()
+                                                         }));
                 doc.Save(stream.BaseStream);
             }
         }
 
-        private XElement CreateXMLWorkItemsElement()
+        private XElement CreateXmlWorkItemsElement()
         {
             var xitemss = new Collection<object>();
             foreach (WorkItemPrintData printWorkItem in PrintWorkItems)
@@ -86,49 +90,57 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                                                          new XAttribute("txtColor",
                                                                         printWorkItem.TextColor.ToString(
                                                                             CultureInfo.InvariantCulture)),
-                                                         CreateXMLLayout(printWorkItem)
+                                                         CreateXmlLayout(printWorkItem)
                                                      }));
             }
 
             return new XElement("workItems", xitemss.ToArray());
         }
 
-        private XElement CreateXMLLayout(WorkItemPrintData workItemPrintData)
+        private XElement CreateXmlLayout(WorkItemPrintData workItemPrintData)
         {
             var xrows = new Collection<object>();
             foreach (Row row in workItemPrintData.Rows)
             {
-
                 xrows.Add(new XElement("row", new object[]
-                                                    {
-                                                        new XAttribute("font", row.Font),
-                                                        CreateXMLRowElements(row)
-                                                    }));
+                                                  {
+                                                      new XAttribute("font", row.Font),
+                                                      new XAttribute("locationY", row.LocationY),
+                                                      CreateXmlRowElements(row)
+                                                  }));
             }
 
             return new XElement("layout", xrows.ToArray());
         }
 
-        private object[] CreateXMLRowElements(Row row)
+        private static object[] CreateXmlRowElements(Row row)
         {
             var xelements = new Collection<object>();
             foreach (IRowElement rowElement in row.RowElements)
             {
-                if (rowElement is RowElementText)
+                var rowElementText = rowElement as RowElementText;
+                if (rowElementText != null)
                 {
                     xelements.Add(new XElement("element", new object[]
                                                               {
                                                                   new XAttribute("type", "text"),
-                                                                  ((RowElementText)rowElement).Data
+                                                                  new XAttribute("maxLenght", rowElement.MaxLength),
+                                                                  new XAttribute("dateFormatting",
+                                                                                 rowElement.DateFormatting),
+                                                                  rowElementText.Data
                                                               }));
                 }
 
-                if (rowElement is RowElementField)
+                var rowElementField = rowElement as RowElementField;
+                if (rowElementField != null)
                 {
                     xelements.Add(new XElement("element", new object[]
                                                               {
-                                                                  new XAttribute("type", "field" ),
-                                                                  ((RowElementField)rowElement).FieldName
+                                                                  new XAttribute("type", "field"),
+                                                                  new XAttribute("maxLenght", rowElement.MaxLength),
+                                                                  new XAttribute("dateFormatting",
+                                                                                 rowElement.DateFormatting),
+                                                                  rowElementField.FieldName
                                                               }));
                 }
             }
@@ -146,7 +158,10 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                                                         new XAttribute("name", fontData.Key),
                                                         new XElement("familyName",
                                                                      new XText(fontData.Value.FontFamily.Name)),
-                                                        new XElement("size", new XText(fontData.Value.Size.ToString(CultureInfo.InvariantCulture))),
+                                                        new XElement("size",
+                                                                     new XText(
+                                                                         fontData.Value.Size.ToString(
+                                                                             CultureInfo.InvariantCulture))),
                                                         new XElement("style", new XText(fontData.Value.Style.ToString()))
                                                     }));
             }
@@ -262,7 +277,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                 {
                     throw new SettingsLoadException("Error loading workitem setting");
                 }
-                
+
                 throw;
             }
         }
@@ -297,7 +312,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                 {
                     throw new SettingsLoadException("Error loading fonts setting");
                 }
-                
+
                 throw;
             }
         }
@@ -354,6 +369,10 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                 if (element.dateFormatting != null)
                 {
                     rowElement.DateFormatting = element.dateFormatting.Value;
+                }
+                else
+                {
+                    rowElement.DateFormatting = string.Empty;
                 }
 
                 rowElement.MaxLength = element.maxLenght != null ? int.Parse(element.maxLenght.Value) : int.MaxValue;
