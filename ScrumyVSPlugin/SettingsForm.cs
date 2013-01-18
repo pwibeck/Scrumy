@@ -124,7 +124,7 @@ namespace PeterWibeck.ScrumyVSPlugin
                     var fontSelection = new ComboBox
                                             {
                                                 Name = "FontForRow_" + printWorkItem.Type + "_" + rownumber,
-                                                Location = new Point(9, 100 + rownumber*20),
+                                                Location = new Point(9, 97 + rownumber*20),
                                                 Visible = false
                                             };
                     foreach (var font in Settings.Fonts)
@@ -138,7 +138,7 @@ namespace PeterWibeck.ScrumyVSPlugin
                     var dataGridView = new DataGridView
                                            {
                                                Location = new Point(9, 120 + rownumber*20),
-                                               Size = new Size(392, 200),
+                                               Size = new Size(450, 200),
                                                Name = "DataGridRow_" + printWorkItem.Type + "_" + rownumber,
                                                ScrollBars = ScrollBars.Both,
                                                Visible = false

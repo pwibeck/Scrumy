@@ -50,11 +50,7 @@
       </Menu>
     </Menus>
     
-    <Groups>
-
-      <Group guid="guidScrumyVSPluginCmdSet" id="ScrumySettingsMenuGroup" priority="0x0600">
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
-      </Group>
+    <Groups>      
 
       <Group guid="guidScrumyVSPluginCmdSet" id="WorkItemTopLevelMenuGroup" priority="0x0600">
         <Parent guid="WorkItemTrackingGuid" id="ResultList"/>
@@ -64,10 +60,13 @@
         <Parent guid="guidScrumyVSPluginCmdSet" id="WorkItemMenu"/>
       </Group>
 
-      <Group guid="guidScrumyVSPluginCmdSet" id="AnalyzeWorkItemSubMenuGroup" priority="0x0200">
+      <!--<Group guid="guidScrumyVSPluginCmdSet" id="AnalyzeWorkItemSubMenuGroup" priority="0x0200">
+        <Parent guid="guidScrumyVSPluginCmdSet" id="WorkItemMenu"/>
+      </Group>-->
+
+      <Group guid="guidScrumyVSPluginCmdSet" id="ScrumySettingsSubMenuGroup" priority="0x0300">
         <Parent guid="guidScrumyVSPluginCmdSet" id="WorkItemMenu"/>
       </Group>
-
 
     </Groups>    
     
@@ -84,7 +83,7 @@
           If you do not want an image next to your command, remove the Icon node /> -->
 
       <Button guid="guidScrumyVSPluginCmdSet" id="cmdScrumySettings" priority="0x0100" type="Button">
-        <Parent guid="guidScrumyVSPluginCmdSet" id="ScrumySettingsMenuGroup" />
+        <Parent guid="guidScrumyVSPluginCmdSet" id="ScrumySettingsSubMenuGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
         <Strings>
           <ButtonText>Scrumy Settings</ButtonText>
@@ -141,7 +140,7 @@
     
     <!-- This is the guid used to group the menu commands together -->
     <GuidSymbol name="guidScrumyVSPluginCmdSet" value="{51374e59-60f0-4036-84b5-073542a4d04b}">
-      <IDSymbol name="ScrumySettingsMenuGroup" value="0x1020" />      
+      <IDSymbol name="ScrumySettingsSubMenuGroup" value="0x1020" />      
       <IDSymbol name="WorkItemTopLevelMenuGroup" value="0x1040" />
       <IDSymbol name="PrintWorkItemSubMenuGroup" value="0x1050" />
       <IDSymbol name="AnalyzeWorkItemSubMenuGroup" value="0x1060" />
