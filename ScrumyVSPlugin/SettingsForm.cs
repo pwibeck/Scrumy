@@ -121,11 +121,32 @@ namespace PeterWibeck.ScrumyVSPlugin
                     rowLable.LinkClicked += RowLableLinkClicked;
                     tab.Controls.Add(rowLable);
 
+                    Panel rowElementPanel = new Panel
+                                                {
+                                                    Name = "RowElementPanel_" + printWorkItem.Type + "_" + rownumber,
+                                                    Location = new Point(9, 97 + rownumber*20),
+                                                    Size = new Size(450, 220),
+                                                    Visible = false
+                                                };
+                    tab.Controls.Add(rowElementPanel);
+
+                    rowElementPanel.Controls.Add(new Label { Text = "Location:", Location = new Point(0, 2), AutoSize = true});
+                    var locationelection = new ComboBox
+                    {
+                        Name = "LocationForRow_" + printWorkItem.Type + "_" + rownumber,
+                        Location = new Point(50, 0),
+                    };
+                    locationelection.Items.Add("Top");
+                    locationelection.Items.Add("Bottom");
+                    locationelection.SelectedItem = row.LocationY;
+                    locationelection.SelectedIndexChanged += LocationelectionSelectedIndexChanged;
+                    rowElementPanel.Controls.Add(locationelection);
+
+                    rowElementPanel.Controls.Add(new Label { Text = "Font:", Location = new Point(180, 2), AutoSize = true});
                     var fontSelection = new ComboBox
                                             {
                                                 Name = "FontForRow_" + printWorkItem.Type + "_" + rownumber,
-                                                Location = new Point(9, 97 + rownumber*20),
-                                                Visible = false
+                                                Location = new Point(220, 0),
                                             };
                     foreach (var font in Settings.Fonts)
                     {
@@ -133,52 +154,52 @@ namespace PeterWibeck.ScrumyVSPlugin
                     }
                     fontSelection.SelectedItem = row.Font;
                     fontSelection.SelectedIndexChanged += FontSelectionSelectedIndexChanged;
-                    tab.Controls.Add(fontSelection);
-
-                    var dataGridView = new DataGridView
+                    rowElementPanel.Controls.Add(fontSelection);
+                    
+                    var rowElementGridView = new DataGridView
                                            {
-                                               Location = new Point(9, 120 + rownumber*20),
+                                               Location = new Point(0, 23),
                                                Size = new Size(450, 200),
                                                Name = "DataGridRow_" + printWorkItem.Type + "_" + rownumber,
                                                ScrollBars = ScrollBars.Both,
-                                               Visible = false
                                            };
 
-                    dataGridView.CellValidated += DataGridViewOnCellValidating;
+                    rowElementGridView.CellValidated += RowElementGridViewOnCellValidated;
                     var typeColumn = new DataGridViewComboBoxColumn {Name = "Type", HeaderText = "Type"};
                     typeColumn.Items.Add("Text");
                     typeColumn.Items.Add("Field");
                     typeColumn.Items.Add("RelatedItem");
-                    dataGridView.Columns.Add(typeColumn);
-                    var textColumn = new DataGridViewTextBoxColumn {Name = "Text", HeaderText = "Text"};
-                    dataGridView.Columns.Add(textColumn);
+                    rowElementGridView.Columns.Add(typeColumn);
+                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn { Name = "MaxLength", HeaderText = "MaxLength" });
+                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn { Name = "DateFormat", HeaderText = "DateFormat" });
+                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn {Name = "Text", HeaderText = "Text"});
                     var fieldColumn = new DataGridViewComboBoxColumn {Name = "Field", HeaderText = "Field", Width = 200};
                     foreach (FieldDefinition field in tfsHelper.FieldDefinitions)
                     {
                         fieldColumn.Items.Add(field.ReferenceName);
                     }
                     fieldColumn.Items.Add("N/A");
-                    dataGridView.Columns.Add(fieldColumn);
-                    tab.Controls.Add(dataGridView);
+                    rowElementGridView.Columns.Add(fieldColumn);
+                    rowElementPanel.Controls.Add(rowElementGridView);
 
                     foreach (IRowElement element in row.RowElements)
                     {
                         var rowElementText = element as RowElementText;
                         if (rowElementText != null)
                         {
-                            dataGridView.Rows.Add("Text", rowElementText.Data, "");
+                            rowElementGridView.Rows.Add("Text", element.MaxLength, element.DateFormatting, rowElementText.Data, "");
                         }
 
                         var rowElementField = element as RowElementField;
                         if (rowElementField != null)
                         {
-                            dataGridView.Rows.Add("Field", "", rowElementField.FieldName);
+                            rowElementGridView.Rows.Add("Field", element.MaxLength, element.DateFormatting, "", rowElementField.FieldName);
                         }
                     }
 
-                    for (int i = 0; i < dataGridView.Rows.Count; i++)
+                    for (int i = 0; i < rowElementGridView.Rows.Count; i++)
                     {
-                        FormatRowElementGrid(i, dataGridView);
+                        FormatRowElementGrid(i, rowElementGridView);
                     }
 
                     rownumber++;
@@ -229,6 +250,23 @@ namespace PeterWibeck.ScrumyVSPlugin
             }
         }
 
+        void LocationelectionSelectedIndexChanged(object sender, EventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            if (comboBox == null)
+                return;
+
+            int row = int.Parse(comboBox.Name.Split('_')[2]);
+            string itemType = comboBox.Name.Split('_')[1];
+            WorkItemPrintData item =
+                Settings.PrintWorkItems.FirstOrDefault(workItemPrintData => workItemPrintData.Type.Equals(itemType));
+
+            if (item != null)
+            {
+                item.Rows[row].LocationY = comboBox.SelectedItem.ToString();
+            }
+        }
+
         private void FontSelectionSelectedIndexChanged(object sender, EventArgs e)
         {
             var comboBox = sender as ComboBox;
@@ -246,7 +284,7 @@ namespace PeterWibeck.ScrumyVSPlugin
             }
         }
 
-        private void DataGridViewOnCellValidating(object sender,
+        private void RowElementGridViewOnCellValidated(object sender,
                                                   DataGridViewCellEventArgs dataGridViewCellValidatingEventArgs)
         {
             var grid = sender as DataGridView;
@@ -275,12 +313,25 @@ namespace PeterWibeck.ScrumyVSPlugin
                 if (type.Equals("Text"))
                 {
                     rowElement = new RowElementText();
+                    int maxLenght;
+                    if(int.TryParse(GetValueForColumn(row, grid, "MaxLength"), out maxLenght))
+                    {
+                        rowElement.MaxLength = maxLenght;
+                    }
+
+                    rowElement.DateFormatting = GetValueForColumn(row, grid, "DateFormat");
                     ((RowElementText) rowElement).Data = GetValueForColumn(row, grid, "Text");
                 }
 
                 if (type.Equals("Field"))
                 {
                     rowElement = new RowElementField();
+                    int maxLenght;
+                    if (int.TryParse(GetValueForColumn(row, grid, "MaxLength"), out maxLenght))
+                    {
+                        rowElement.MaxLength = maxLenght;
+                    }
+                    rowElement.DateFormatting = GetValueForColumn(row, grid, "DateFormat");
                     ((RowElementField) rowElement).FieldName = GetValueForColumn(row, grid, "Field");
                 }
 
@@ -381,12 +432,7 @@ namespace PeterWibeck.ScrumyVSPlugin
             // Set new positions
             foreach (Control s in label.Parent.Controls)
             {
-                if (s.Name.StartsWith("DataGridRow_"))
-                {
-                    s.Visible = s.Name.EndsWith("_" + row);
-                }
-
-                if (s.Name.StartsWith("FontForRow_"))
+                if (s.Name.StartsWith("RowElementPanel_"))
                 {
                     s.Visible = s.Name.EndsWith("_" + row);
                 }
