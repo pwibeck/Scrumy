@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace PeterWibeck.ScrumyVSPlugin.TFS
@@ -52,38 +51,6 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
             ResetSettings();
         }
 
-
-        //protected bool Equals(Settings other)
-        //{
-        //    return string.Equals(ScrumTeam, other.ScrumTeam) && string.Equals(Sprint, other.Sprint) &&
-        //           string.Equals(TfsProject, other.TfsProject) && BugBackGroundColor.Equals(other.BugBackGroundColor) &&
-        //           DeliverableBackGroundColor.Equals(other.DeliverableBackGroundColor) &&
-        //           TaskBackGroundColor.Equals(other.TaskBackGroundColor)
-        //           && SliceBackGroundColor.Equals(other.SliceBackGroundColor) && BugTextColor.Equals(other.BugTextColor)
-        //           && DeliverableTextColor.Equals(other.DeliverableTextColor) &&
-        //           TaskTextColor.Equals(other.TaskTextColor)
-        //           && SliceTextColor.Equals(other.SliceTextColor);
-        //}
-
-        //public override int GetHashCode()
-        //{
-        //    unchecked
-        //    {
-        //        int hashCode = (ScrumTeam != null ? ScrumTeam.GetHashCode() : 0);
-        //        hashCode = (hashCode*397) ^ (Sprint != null ? Sprint.GetHashCode() : 0);
-        //        hashCode = (hashCode*397) ^ (TfsProject != null ? TfsProject.GetHashCode() : 0);
-        //        hashCode = (hashCode*397) ^ BugBackGroundColor.GetHashCode();
-        //        hashCode = (hashCode*397) ^ DeliverableBackGroundColor.GetHashCode();
-        //        hashCode = (hashCode*397) ^ TaskBackGroundColor.GetHashCode();
-        //        hashCode = (hashCode * 397) ^ SliceBackGroundColor.GetHashCode();
-        //        hashCode = (hashCode * 397) ^ BugTextColor.GetHashCode();
-        //        hashCode = (hashCode * 397) ^ DeliverableTextColor.GetHashCode();
-        //        hashCode = (hashCode * 397) ^ TaskTextColor.GetHashCode();
-        //        hashCode = (hashCode * 397) ^ SliceTextColor.GetHashCode();
-        //        return hashCode;
-        //    }
-        //}
-
         public void SaveSettings()
         {
             SaveSettings(new IsolatedStorageFileAdapter(storeType));
@@ -100,12 +67,12 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
             {
                 var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"),
                                         new XElement("settings",
-                                                     new object[] {new XAttribute("version", "1"), CreateFontsElement(), CreateWorkItemsElement()}));
+                                                     new object[] {new XAttribute("version", "1"), CreateFontsElement(), CreateXMLWorkItemsElement()}));
                 doc.Save(stream.BaseStream);
             }
         }
 
-        private XElement CreateWorkItemsElement()
+        private XElement CreateXMLWorkItemsElement()
         {
             var xitemss = new Collection<object>();
             foreach (WorkItemPrintData printWorkItem in PrintWorkItems)
@@ -119,11 +86,54 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                                                          new XAttribute("txtColor",
                                                                         printWorkItem.TextColor.ToString(
                                                                             CultureInfo.InvariantCulture)),
-                                                         XElement.Parse(printWorkItem.RowsRawData)
+                                                         CreateXMLLayout(printWorkItem)
                                                      }));
             }
 
             return new XElement("workItems", xitemss.ToArray());
+        }
+
+        private XElement CreateXMLLayout(WorkItemPrintData workItemPrintData)
+        {
+            var xrows = new Collection<object>();
+            foreach (Row row in workItemPrintData.Rows)
+            {
+
+                xrows.Add(new XElement("row", new object[]
+                                                    {
+                                                        new XAttribute("font", row.Font),
+                                                        CreateXMLRowElements(row)
+                                                    }));
+            }
+
+            return new XElement("layout", xrows.ToArray());
+        }
+
+        private object[] CreateXMLRowElements(Row row)
+        {
+            var xelements = new Collection<object>();
+            foreach (IRowElement rowElement in row.RowElements)
+            {
+                if (rowElement is RowElementText)
+                {
+                    xelements.Add(new XElement("element", new object[]
+                                                              {
+                                                                  new XAttribute("type", "text"),
+                                                                  ((RowElementText)rowElement).Data
+                                                              }));
+                }
+
+                if (rowElement is RowElementField)
+                {
+                    xelements.Add(new XElement("element", new object[]
+                                                              {
+                                                                  new XAttribute("type", "field" ),
+                                                                  ((RowElementField)rowElement).FieldName
+                                                              }));
+                }
+            }
+
+            return xelements.ToArray();
         }
 
         private XElement CreateFontsElement()
@@ -363,13 +373,5 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
             LoadItems(doc);
             document = doc.ToString();
         }
-
-        //public override bool Equals(object obj)
-        //{
-        //    if (ReferenceEquals(null, obj)) return false;
-        //    if (ReferenceEquals(this, obj)) return true;
-        //    if (obj.GetType() != GetType()) return false;
-        //    return Equals((Settings) obj);
-        //}
     }
 }

@@ -111,7 +111,9 @@ namespace PeterWibeck.ScrumyVSPlugin
 
         private void ScrumySettingsCallback(object sender, EventArgs e)
         {
-            SettingsForm settingsForm = new SettingsForm();
+            TeamFoundationServerExt tfsExt = (TeamFoundationServerExt)Dte.GetObject("Microsoft.VisualStudio.TeamFoundation.TeamFoundationServerExt");
+            TfsHelper tfsHelper = new TfsHelper(new Uri(tfsExt.ActiveProjectContext.DomainUri), tfsExt.ActiveProjectContext.ProjectName);
+            SettingsForm settingsForm = new SettingsForm(tfsHelper);
             settingsForm.ShowDialog();
         }
 

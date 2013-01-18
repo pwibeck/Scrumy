@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
@@ -27,6 +28,11 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
             this.teamCollectionUrl = teamCollectionUrl;
             Connect();
             this.teamProject = teamProject;
+        }
+
+        public FieldDefinitionCollection FieldDefinitions
+        {
+            get { return store.FieldDefinitions; }
         }
 
         /// <summary>
