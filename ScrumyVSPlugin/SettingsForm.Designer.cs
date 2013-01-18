@@ -33,13 +33,13 @@
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.TabControl = new System.Windows.Forms.TabControl();
             this.FontsTab = new System.Windows.Forms.TabPage();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.AdvancedTab = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
             this.btnReset = new System.Windows.Forms.Button();
             this.AdvanceDocument = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.fontDialog1 = new System.Windows.Forms.FontDialog();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.TabControl.SuspendLayout();
             this.FontsTab.SuspendLayout();
             this.AdvancedTab.SuspendLayout();
@@ -47,7 +47,7 @@
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(343, 312);
+            this.btnClose.Location = new System.Drawing.Point(458, 421);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 33;
@@ -57,7 +57,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(262, 312);
+            this.btnSave.Location = new System.Drawing.Point(377, 421);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 32;
@@ -72,7 +72,7 @@
             this.TabControl.Location = new System.Drawing.Point(3, 3);
             this.TabControl.Name = "TabControl";
             this.TabControl.SelectedIndex = 0;
-            this.TabControl.Size = new System.Drawing.Size(415, 303);
+            this.TabControl.Size = new System.Drawing.Size(541, 412);
             this.TabControl.TabIndex = 60;
             // 
             // FontsTab
@@ -82,10 +82,30 @@
             this.FontsTab.Location = new System.Drawing.Point(4, 22);
             this.FontsTab.Name = "FontsTab";
             this.FontsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.FontsTab.Size = new System.Drawing.Size(407, 277);
+            this.FontsTab.Size = new System.Drawing.Size(533, 386);
             this.FontsTab.TabIndex = 0;
             this.FontsTab.Text = "Fonts";
             this.FontsTab.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(126, 11);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "Style";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(7, 11);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Name";
             // 
             // AdvancedTab
             // 
@@ -95,10 +115,19 @@
             this.AdvancedTab.Location = new System.Drawing.Point(4, 22);
             this.AdvancedTab.Name = "AdvancedTab";
             this.AdvancedTab.Padding = new System.Windows.Forms.Padding(3);
-            this.AdvancedTab.Size = new System.Drawing.Size(407, 277);
+            this.AdvancedTab.Size = new System.Drawing.Size(533, 386);
             this.AdvancedTab.TabIndex = 1;
             this.AdvancedTab.Text = "Advanced";
             this.AdvancedTab.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 7);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(221, 13);
+            this.label1.TabIndex = 62;
+            this.label1.Text = "Any change here will overid all other changes";
             // 
             // btnReset
             // 
@@ -116,48 +145,19 @@
             this.AdvanceDocument.Multiline = true;
             this.AdvanceDocument.Name = "AdvanceDocument";
             this.AdvanceDocument.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.AdvanceDocument.Size = new System.Drawing.Size(395, 230);
+            this.AdvanceDocument.Size = new System.Drawing.Size(524, 336);
             this.AdvanceDocument.TabIndex = 0;
             this.AdvanceDocument.WordWrap = false;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(221, 13);
-            this.label1.TabIndex = 62;
-            this.label1.Text = "Any change here will overid all other changes";
             // 
             // fontDialog1
             // 
             this.fontDialog1.Color = System.Drawing.SystemColors.ControlText;
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(7, 11);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(39, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Name";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(126, 11);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Style";
-            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(423, 339);
+            this.ClientSize = new System.Drawing.Size(545, 446);
             this.Controls.Add(this.TabControl);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSave);
