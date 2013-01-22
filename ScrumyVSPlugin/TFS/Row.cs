@@ -6,13 +6,13 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
     {
         public Row()
         {
-            LocationY = "Top";
+            Alignment = "Top";
             RowElements = new Collection<IRowElement>();
         }
 
         public string Font { get; set; }
 
-        public string LocationY { get; set; }
+        public string Alignment { get; set; }
 
         public Collection<IRowElement> RowElements { get; set; }
     }

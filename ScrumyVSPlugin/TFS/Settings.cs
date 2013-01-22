@@ -37,10 +37,15 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
             {
                 TextReader textReader = new StringReader(value);
                 XDocument doc = XDocument.Load(textReader);
-                LoadFonts(doc);
-                LoadItems(doc);
-                document = value;
+                LoadSettings(doc);
             }
+        }
+
+        private void LoadSettings(XDocument doc)
+        {
+            LoadFonts(doc);
+            LoadItems(doc);
+            document = doc.ToString();
         }
 
         protected void Init(IsolatedStorageFileAdapter.StoreType store)
@@ -105,7 +110,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                 xrows.Add(new XElement("row", new object[]
                                                   {
                                                       new XAttribute("font", row.Font),
-                                                      new XAttribute("locationY", row.LocationY),
+                                                      new XAttribute("alignment", row.Alignment),
                                                       CreateXmlRowElements(row)
                                                   }));
             }
@@ -124,9 +129,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                     xelements.Add(new XElement("element", new object[]
                                                               {
                                                                   new XAttribute("type", "text"),
-                                                                  new XAttribute("maxLenght", rowElement.MaxLength),
-                                                                  new XAttribute("dateFormatting",
-                                                                                 rowElement.DateFormatting),
+                                                                  new XAttribute("maxLength", rowElement.MaxLength),
                                                                   rowElementText.Data
                                                               }));
                 }
@@ -137,10 +140,29 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                     xelements.Add(new XElement("element", new object[]
                                                               {
                                                                   new XAttribute("type", "field"),
-                                                                  new XAttribute("maxLenght", rowElement.MaxLength),
+                                                                  new XAttribute("maxLength", rowElement.MaxLength),
                                                                   new XAttribute("dateFormatting",
                                                                                  rowElement.DateFormatting),
                                                                   rowElementField.FieldName
+                                                              }));
+                }
+
+                var rowElementRelatedItem = rowElement as RowElementRelatedItem;
+                if (rowElementRelatedItem != null)
+                {
+                    xelements.Add(new XElement("element", new object[]
+                                                              {
+                                                                  new XAttribute("type", "relatedItem"),
+                                                                  new XAttribute("maxLength",
+                                                                                 rowElementRelatedItem.MaxLength),
+                                                                  new XAttribute("dateFormatting",
+                                                                                 rowElementRelatedItem.DateFormatting),
+                                                                  new XAttribute("searchField",
+                                                                                 rowElementRelatedItem.SearchField),
+                                                                  new XAttribute("searchData",
+                                                                                 rowElementRelatedItem.SearcData),
+                                                                  new XAttribute("resultField",
+                                                                                 rowElementRelatedItem.ResultField)
                                                               }));
                 }
             }
@@ -184,9 +206,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                     try
                     {
                         XDocument doc = XDocument.Load(stream.BaseStream);
-                        LoadFonts(doc);
-                        LoadItems(doc);
-                        document = doc.ToString();
+                        LoadSettings(doc);
                     }
                     catch (SettingsLoadException)
                     {
@@ -239,7 +259,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                                    select new
                                               {
                                                   font = row.Attribute("font").Value,
-                                                  locationY = row.Attribute("locationY"),
+                                                  alignment = row.Attribute("alignment"),
                                                   rowLayout = row
                                               };
                         foreach (var row in xrow)
@@ -250,9 +270,9 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                                             RowElements = CreateRowElements(row.rowLayout)
                                         };
 
-                            if (row.locationY != null)
+                            if (row.alignment != null)
                             {
-                                r.LocationY = row.locationY.Value;
+                                r.Alignment = row.alignment.Value;
                             }
 
                             printWorkItem.Rows.Add(r);
@@ -325,7 +345,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                              select new
                                         {
                                             type = layout.Attribute("type"),
-                                            maxLenght = layout.Attribute("maxLenght"),
+                                            maxLenght = layout.Attribute("maxLength"),
                                             dateFormatting = layout.Attribute("dateFormatting"),
                                             data = layout
                                         };
@@ -388,9 +408,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
             Assembly assembly = Assembly.GetExecutingAssembly();
             XDocument doc =
                 XDocument.Load(assembly.GetManifestResourceStream("PeterWibeck.ScrumyVSPlugin.TFS.SettingsDefault.xml"));
-            LoadFonts(doc);
-            LoadItems(doc);
-            document = doc.ToString();
+            LoadSettings(doc);
         }
     }
 }
