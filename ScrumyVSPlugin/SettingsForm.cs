@@ -12,6 +12,24 @@ namespace PeterWibeck.ScrumyVSPlugin
         private readonly TfsHelper tfsHelper;
         public Settings Settings = new Settings();
 
+        private enum RowElementType
+        {
+            Text,
+            Field,
+            RelatedItem
+        }
+
+        private enum RowElementAttributes
+        {
+            MaxeLength,
+            Text,
+            Field,
+            DateFormat,
+            SearchField,
+            SearchData,
+            ResultField
+        }
+
         public SettingsForm()
         {
             InitializeComponent();
@@ -130,17 +148,17 @@ namespace PeterWibeck.ScrumyVSPlugin
                                                 };
                     tab.Controls.Add(rowElementPanel);
 
-                    rowElementPanel.Controls.Add(new Label { Text = "Location:", Location = new Point(0, 2), AutoSize = true});
-                    var locationelection = new ComboBox
+                    rowElementPanel.Controls.Add(new Label { Text = "Alignment:", Location = new Point(0, 2), AutoSize = true});
+                    var alignmentSelection = new ComboBox
                     {
-                        Name = "LocationForRow_" + printWorkItem.Type + "_" + rownumber,
-                        Location = new Point(50, 0),
+                        Name = "AlignmentForRow_" + printWorkItem.Type + "_" + rownumber,
+                        Location = new Point(55, 0),
                     };
-                    locationelection.Items.Add("Top");
-                    locationelection.Items.Add("Bottom");
-                    locationelection.SelectedItem = row.LocationY;
-                    locationelection.SelectedIndexChanged += LocationelectionSelectedIndexChanged;
-                    rowElementPanel.Controls.Add(locationelection);
+                    alignmentSelection.Items.Add("Top");
+                    alignmentSelection.Items.Add("Bottom");
+                    alignmentSelection.SelectedItem = row.Alignment;
+                    alignmentSelection.SelectedIndexChanged += AlignmentSelectionSelectedIndexChanged;
+                    rowElementPanel.Controls.Add(alignmentSelection);
 
                     rowElementPanel.Controls.Add(new Label { Text = "Font:", Location = new Point(180, 2), AutoSize = true});
                     var fontSelection = new ComboBox
@@ -166,20 +184,40 @@ namespace PeterWibeck.ScrumyVSPlugin
 
                     rowElementGridView.CellValidated += RowElementGridViewOnCellValidated;
                     var typeColumn = new DataGridViewComboBoxColumn {Name = "Type", HeaderText = "Type"};
-                    typeColumn.Items.Add("Text");
-                    typeColumn.Items.Add("Field");
-                    typeColumn.Items.Add("RelatedItem");
+                    typeColumn.Items.Add(RowElementType.Text.ToString());
+                    typeColumn.Items.Add(RowElementType.Field.ToString());
+                    typeColumn.Items.Add(RowElementType.RelatedItem.ToString());
                     rowElementGridView.Columns.Add(typeColumn);
-                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn { Name = "MaxLength", HeaderText = "MaxLength" });
-                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn { Name = "DateFormat", HeaderText = "DateFormat" });
-                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn {Name = "Text", HeaderText = "Text"});
-                    var fieldColumn = new DataGridViewComboBoxColumn {Name = "Field", HeaderText = "Field", Width = 200};
+                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn { Name = RowElementAttributes.MaxeLength.ToString(), HeaderText = RowElementAttributes.MaxeLength.ToString()});
+                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn { Name = RowElementAttributes.DateFormat.ToString(), HeaderText = RowElementAttributes.DateFormat.ToString() });
+                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn { Name = RowElementAttributes.Text.ToString(), HeaderText = RowElementAttributes.Text.ToString() });
+
+                    var fieldColumn = new DataGridViewComboBoxColumn { Name = RowElementAttributes.Field.ToString(), HeaderText = RowElementAttributes.Field.ToString(), Width = 200 };
                     foreach (FieldDefinition field in tfsHelper.FieldDefinitions)
                     {
                         fieldColumn.Items.Add(field.ReferenceName);
                     }
                     fieldColumn.Items.Add("N/A");
                     rowElementGridView.Columns.Add(fieldColumn);
+
+                    var searchFieldColumn = new DataGridViewComboBoxColumn { Name = RowElementAttributes.SearchField.ToString(), HeaderText = RowElementAttributes.SearchField.ToString(), Width = 200 };
+                    foreach (FieldDefinition field in tfsHelper.FieldDefinitions)
+                    {
+                        searchFieldColumn.Items.Add(field.ReferenceName);
+                    }
+                    searchFieldColumn.Items.Add("N/A");
+                    rowElementGridView.Columns.Add(searchFieldColumn);
+
+                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn { Name = RowElementAttributes.SearchData.ToString(), HeaderText = RowElementAttributes.SearchData.ToString() });
+
+                    var resultFieldColumn = new DataGridViewComboBoxColumn { Name = RowElementAttributes.ResultField.ToString(), HeaderText = RowElementAttributes.ResultField.ToString(), Width = 200 };
+                    foreach (FieldDefinition field in tfsHelper.FieldDefinitions)
+                    {
+                        resultFieldColumn.Items.Add(field.ReferenceName);
+                    }
+                    resultFieldColumn.Items.Add("N/A");
+                    rowElementGridView.Columns.Add(resultFieldColumn);
+
                     rowElementPanel.Controls.Add(rowElementGridView);
 
                     foreach (IRowElement element in row.RowElements)
@@ -187,13 +225,19 @@ namespace PeterWibeck.ScrumyVSPlugin
                         var rowElementText = element as RowElementText;
                         if (rowElementText != null)
                         {
-                            rowElementGridView.Rows.Add("Text", element.MaxLength, element.DateFormatting, rowElementText.Data, "");
+                            rowElementGridView.Rows.Add(RowElementType.Text.ToString(), element.MaxLength, element.DateFormatting, rowElementText.Data, "","","","");
                         }
 
                         var rowElementField = element as RowElementField;
                         if (rowElementField != null)
                         {
-                            rowElementGridView.Rows.Add("Field", element.MaxLength, element.DateFormatting, "", rowElementField.FieldName);
+                            rowElementGridView.Rows.Add(RowElementType.Field.ToString(), element.MaxLength, element.DateFormatting, "", rowElementField.FieldName, "", "", "");
+                        }
+
+                        var rowElementRelatedItem = element as RowElementRelatedItem;
+                        if (rowElementRelatedItem != null)
+                        {
+                            rowElementGridView.Rows.Add(RowElementType.RelatedItem.ToString(), element.MaxLength, element.DateFormatting, "", "", rowElementRelatedItem.SearchField, rowElementRelatedItem.SearcData, rowElementRelatedItem.ResultField);
                         }
                     }
 
@@ -250,7 +294,7 @@ namespace PeterWibeck.ScrumyVSPlugin
             }
         }
 
-        void LocationelectionSelectedIndexChanged(object sender, EventArgs e)
+        void AlignmentSelectionSelectedIndexChanged(object sender, EventArgs e)
         {
             var comboBox = sender as ComboBox;
             if (comboBox == null)
@@ -263,7 +307,7 @@ namespace PeterWibeck.ScrumyVSPlugin
 
             if (item != null)
             {
-                item.Rows[row].LocationY = comboBox.SelectedItem.ToString();
+                item.Rows[row].Alignment = comboBox.SelectedItem.ToString();
             }
         }
 
@@ -310,29 +354,44 @@ namespace PeterWibeck.ScrumyVSPlugin
                 string type = GetValueForColumn(row, grid, "Type");
 
                 IRowElement rowElement = null;
-                if (type.Equals("Text"))
+                if (type.Equals(RowElementType.Text.ToString()))
                 {
                     rowElement = new RowElementText();
                     int maxLenght;
-                    if(int.TryParse(GetValueForColumn(row, grid, "MaxLength"), out maxLenght))
+                    if(int.TryParse(GetValueForColumn(row, grid, RowElementAttributes.MaxeLength.ToString()), out maxLenght))
                     {
                         rowElement.MaxLength = maxLenght;
                     }
 
-                    rowElement.DateFormatting = GetValueForColumn(row, grid, "DateFormat");
-                    ((RowElementText) rowElement).Data = GetValueForColumn(row, grid, "Text");
+                    ((RowElementText)rowElement).Data = GetValueForColumn(row, grid, RowElementAttributes.Text.ToString());
                 }
 
-                if (type.Equals("Field"))
+                if (type.Equals(RowElementType.Field.ToString()))
                 {
                     rowElement = new RowElementField();
                     int maxLenght;
-                    if (int.TryParse(GetValueForColumn(row, grid, "MaxLength"), out maxLenght))
+                    if (int.TryParse(GetValueForColumn(row, grid, RowElementAttributes.MaxeLength.ToString()), out maxLenght))
                     {
                         rowElement.MaxLength = maxLenght;
                     }
-                    rowElement.DateFormatting = GetValueForColumn(row, grid, "DateFormat");
-                    ((RowElementField) rowElement).FieldName = GetValueForColumn(row, grid, "Field");
+
+                    rowElement.DateFormatting = GetValueForColumn(row, grid, RowElementAttributes.DateFormat.ToString());
+                    ((RowElementField)rowElement).FieldName = GetValueForColumn(row, grid, RowElementAttributes.Field.ToString());
+                }
+
+                if (type.Equals(RowElementType.RelatedItem.ToString()))
+                {
+                    rowElement = new RowElementRelatedItem();
+                    int maxLenght;
+                    if (int.TryParse(GetValueForColumn(row, grid, RowElementAttributes.MaxeLength.ToString()), out maxLenght))
+                    {
+                        rowElement.MaxLength = maxLenght;
+                    }
+
+                    rowElement.DateFormatting = GetValueForColumn(row, grid, RowElementAttributes.DateFormat.ToString());
+                    ((RowElementRelatedItem)rowElement).SearchField = GetValueForColumn(row, grid, RowElementAttributes.SearchField.ToString());
+                    ((RowElementRelatedItem)rowElement).SearcData = GetValueForColumn(row, grid, RowElementAttributes.SearchData.ToString());
+                    ((RowElementRelatedItem)rowElement).ResultField = GetValueForColumn(row, grid, RowElementAttributes.ResultField.ToString());
                 }
 
                 rowData.RowElements.Add(rowElement);
@@ -367,14 +426,69 @@ namespace PeterWibeck.ScrumyVSPlugin
 
             foreach (DataGridViewCell cell in grid.Rows[rowIndex].Cells)
             {
-                if (grid.Columns[cell.ColumnIndex].Name.Equals("Field"))
+                if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.DateFormat.ToString()))
                 {
-                    if (type.Equals("Text"))
+                    if (type.Equals(RowElementType.Field.ToString()))
+                    {
+                        if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
+                        {
+                            cell.Value = string.Empty;
+                        }
+
+                        cell.ReadOnly = false;
+                    }
+                    else if (type.Equals(RowElementType.Text.ToString()))
                     {
                         cell.Value = "N/A";
                         cell.ReadOnly = true;
                     }
-                    else if (type.Equals("Field"))
+                    else if (type.Equals(RowElementType.RelatedItem.ToString()))
+                    {
+                        if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
+                        {
+                            cell.Value = string.Empty;
+                        }
+
+                        cell.ReadOnly = false;
+                    }
+                }
+                
+                if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.Field.ToString()))
+                {
+                    if (type.Equals(RowElementType.Field.ToString()))
+                    {
+                        if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
+                        {
+                            cell.Value = string.Empty;
+                        }
+
+                        cell.ReadOnly = false;
+                    }
+                    else if (type.Equals(RowElementType.Text.ToString()))
+                    {
+                        cell.Value = "N/A";
+                        cell.ReadOnly = true;
+                    }
+                    else if (type.Equals(RowElementType.RelatedItem.ToString()))
+                    {
+                        cell.Value = "N/A";
+                        cell.ReadOnly = true;
+                    }
+                }
+
+                if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.ResultField.ToString()))
+                {
+                    if (type.Equals(RowElementType.Field.ToString()))
+                    {
+                        cell.Value = "N/A";
+                        cell.ReadOnly = true;
+                    }
+                    else if (type.Equals(RowElementType.Text.ToString()))
+                    {
+                        cell.Value = "N/A";
+                        cell.ReadOnly = true;
+                    }
+                    else if (type.Equals(RowElementType.RelatedItem.ToString()))
                     {
                         if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
                         {
@@ -385,9 +499,19 @@ namespace PeterWibeck.ScrumyVSPlugin
                     }
                 }
 
-                if (grid.Columns[cell.ColumnIndex].Name.Equals("Text"))
+                if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.SearchData.ToString()))
                 {
-                    if (type.Equals("Text"))
+                    if (type.Equals(RowElementType.Field.ToString()))
+                    {
+                        cell.Value = "N/A";
+                        cell.ReadOnly = true;
+                    }
+                    else if (type.Equals(RowElementType.Text.ToString()))
+                    {
+                        cell.Value = "N/A";
+                        cell.ReadOnly = true;
+                    }
+                    else if (type.Equals(RowElementType.RelatedItem.ToString()))
                     {
                         if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
                         {
@@ -396,7 +520,48 @@ namespace PeterWibeck.ScrumyVSPlugin
 
                         cell.ReadOnly = false;
                     }
-                    else if (type.Equals("Field"))
+                }
+
+                if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.SearchField.ToString()))
+                {
+                    if (type.Equals(RowElementType.Field.ToString()))
+                    {
+                        cell.Value = "N/A";
+                        cell.ReadOnly = true;
+                    }
+                    else if (type.Equals(RowElementType.Text.ToString()))
+                    {
+                        cell.Value = "N/A";
+                        cell.ReadOnly = true;
+                    }
+                    else if (type.Equals(RowElementType.RelatedItem.ToString()))
+                    {
+                        if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
+                        {
+                            cell.Value = string.Empty;
+                        }
+
+                        cell.ReadOnly = false;
+                    }
+                }
+
+                if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.Text.ToString()))
+                {
+                    if (type.Equals(RowElementType.Field.ToString()))
+                    {
+                        cell.Value = "N/A";
+                        cell.ReadOnly = true;
+                    }
+                    else if (type.Equals(RowElementType.Text.ToString()))
+                    {
+                        if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
+                        {
+                            cell.Value = string.Empty;
+                        }
+
+                        cell.ReadOnly = false;
+                    }
+                    else if (type.Equals(RowElementType.RelatedItem.ToString()))
                     {
                         cell.Value = "N/A";
                         cell.ReadOnly = true;
@@ -411,10 +576,10 @@ namespace PeterWibeck.ScrumyVSPlugin
             if (label == null) 
                 return;
 
-            int row = int.Parse(label.Name.Split('_')[1]);
+            var row = int.Parse(label.Name.Split('_')[1]);
 
             // Find first row link postion
-            int startY =
+            var startY =
                 (from Control s in label.Parent.Controls where s.Name.Equals("RowLink_0") select s.Location.Y).
                     FirstOrDefault();
 
@@ -425,8 +590,8 @@ namespace PeterWibeck.ScrumyVSPlugin
                     where s.Name.StartsWith("RowLink_") && !s.Name.Equals("RowLink_0")
                     select s)
             {
-                s.Location = new Point(s.Location.X, startY + int.Parse(s.Name.Split('_')[1])*20);
-                break;
+                var rowNumber = int.Parse(s.Name.Split('_')[1]);
+                s.Location = new Point(s.Location.X, startY + (rowNumber * 20));
             }
 
             // Set new positions
@@ -437,9 +602,10 @@ namespace PeterWibeck.ScrumyVSPlugin
                     s.Visible = s.Name.EndsWith("_" + row);
                 }
 
-                if (s.Name.StartsWith("RowLink_") && s != label)
+                if (s.Name.StartsWith("RowLink_"))
                 {
-                    if (row < int.Parse(s.Name.Split('_')[1]))
+                    var rowNumber = int.Parse(s.Name.Split('_')[1]);
+                    if (row < rowNumber)
                     {
                         s.Location = new Point(s.Location.X, s.Location.Y + 220);
                     }
