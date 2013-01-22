@@ -16,7 +16,5 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
         public int TextColor { get; set; }
 
         public Collection<Row> Rows { get; set; }
-
-        public string RowsRawData { get; set; }
     }
 }

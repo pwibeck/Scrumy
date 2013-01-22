@@ -251,7 +251,6 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                                                 Type = item.type,
                                                 BackGroundColor = item.bgcolor,
                                                 TextColor = item.txtcolor,
-                                                RowsRawData = item.layout.ToString()
                                             };
                     try
                     {
