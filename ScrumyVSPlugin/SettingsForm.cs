@@ -125,7 +125,7 @@ namespace PeterWibeck.ScrumyVSPlugin
                                               {
                                                   Name = "RowElementPanel_" + printWorkItem.Type + "_" + rownumber,
                                                   Location = new Point(9, 97 + rownumber*20),
-                                                  Size = new Size(450, 220),
+                                                  Size = new Size(500, 220),
                                                   Visible = false
                                               };
                     tab.Controls.Add(rowElementPanel);
@@ -161,7 +161,7 @@ namespace PeterWibeck.ScrumyVSPlugin
                     var rowElementGridView = new DataGridView
                                                  {
                                                      Location = new Point(0, 23),
-                                                     Size = new Size(450, 200),
+                                                     Size = new Size(500, 200),
                                                      Name = "DataGridRow_" + printWorkItem.Type + "_" + rownumber,
                                                      ScrollBars = ScrollBars.Both,
                                                  };
