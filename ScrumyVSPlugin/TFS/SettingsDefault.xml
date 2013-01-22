@@ -44,7 +44,7 @@
         </row>
         <row font="DeliverableFont">
           <element type="text">Deliverable:</element>
-          <element type="relatedItem" maxLenght="70" searchField ="System.WorkItemType" searchData="Deliverable" resultField="System.Title"/>
+          <element type="relatedItem" maxLength="70" searchField ="System.WorkItemType" searchData="Deliverable" resultField="System.Title"/>
         </row>
         <row font="Title">
           <element type="field">System.Title</element>
@@ -60,12 +60,12 @@
           <element type="text"> S:</element>
           <element type="field">Microsoft.VSTS.Common.Severity</element>
           <element type="text"> </element>
-          <element type="field" maxLenght="15">Microsoft.VSTS.Common.Issue</element>
+          <element type="field" maxLength="15">Microsoft.VSTS.Common.Issue</element>
         </row>
         <row font="Title">
           <element type="field">System.Title</element>
         </row>
-        <row font="CreationDateFont" locationY="Bottom">
+        <row font="CreationDateFont" alignment="Bottom">
           <element type="field" dateFormatting="d MMM">System.CreatedDate</element>
         </row>
       </layout>

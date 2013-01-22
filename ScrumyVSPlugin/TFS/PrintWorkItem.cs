@@ -140,7 +140,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                     float totalStringPrintWidth = g.MeasureString(rowText, printFont).Width;
                     float printAreaHeight = (float) Math.Floor((totalStringPrintWidth/textPrintArea.Width)) + 1;
 
-                    if (String.Compare(row.LocationY, "Top", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (String.Compare(row.Alignment, "Top", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         g.DrawString(rowText, printFont,
                                      new SolidBrush(Color.FromArgb(printData.TextColor)),
@@ -149,7 +149,7 @@ namespace PeterWibeck.ScrumyVSPlugin.TFS
                                                     printAreaHeight*printFont.GetHeight(g)));
                         printOffsetY += printAreaHeight*printFont.GetHeight(g);
                     }
-                    else if (String.Compare(row.LocationY, "Bottom", StringComparison.OrdinalIgnoreCase) == 0)
+                    else if (String.Compare(row.Alignment, "Bottom", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         g.DrawString(rowText, printFont,
                                      new SolidBrush(Color.FromArgb(printData.TextColor)),
