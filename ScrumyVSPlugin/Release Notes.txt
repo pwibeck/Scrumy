@@ -1,3 +1,6 @@
+1.0.7
+Added possibility to edit row element data from a UI and not directly in the XML code
+
 1.0.6
 Added support for chaning fonts
 
