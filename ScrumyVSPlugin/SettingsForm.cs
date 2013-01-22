@@ -12,24 +12,6 @@ namespace PeterWibeck.ScrumyVSPlugin
         private readonly TfsHelper tfsHelper;
         public Settings Settings = new Settings();
 
-        private enum RowElementType
-        {
-            Text,
-            Field,
-            RelatedItem
-        }
-
-        private enum RowElementAttributes
-        {
-            MaxeLength,
-            Text,
-            Field,
-            DateFormat,
-            SearchField,
-            SearchData,
-            ResultField
-        }
-
         public SettingsForm()
         {
             InitializeComponent();
@@ -139,28 +121,30 @@ namespace PeterWibeck.ScrumyVSPlugin
                     rowLable.LinkClicked += RowLableLinkClicked;
                     tab.Controls.Add(rowLable);
 
-                    Panel rowElementPanel = new Panel
-                                                {
-                                                    Name = "RowElementPanel_" + printWorkItem.Type + "_" + rownumber,
-                                                    Location = new Point(9, 97 + rownumber*20),
-                                                    Size = new Size(450, 220),
-                                                    Visible = false
-                                                };
+                    var rowElementPanel = new Panel
+                                              {
+                                                  Name = "RowElementPanel_" + printWorkItem.Type + "_" + rownumber,
+                                                  Location = new Point(9, 97 + rownumber*20),
+                                                  Size = new Size(450, 220),
+                                                  Visible = false
+                                              };
                     tab.Controls.Add(rowElementPanel);
 
-                    rowElementPanel.Controls.Add(new Label { Text = "Alignment:", Location = new Point(0, 2), AutoSize = true});
+                    rowElementPanel.Controls.Add(new Label
+                                                     {Text = "Alignment:", Location = new Point(0, 2), AutoSize = true});
                     var alignmentSelection = new ComboBox
-                    {
-                        Name = "AlignmentForRow_" + printWorkItem.Type + "_" + rownumber,
-                        Location = new Point(55, 0),
-                    };
+                                                 {
+                                                     Name = "AlignmentForRow_" + printWorkItem.Type + "_" + rownumber,
+                                                     Location = new Point(55, 0),
+                                                 };
                     alignmentSelection.Items.Add("Top");
                     alignmentSelection.Items.Add("Bottom");
                     alignmentSelection.SelectedItem = row.Alignment;
                     alignmentSelection.SelectedIndexChanged += AlignmentSelectionSelectedIndexChanged;
                     rowElementPanel.Controls.Add(alignmentSelection);
 
-                    rowElementPanel.Controls.Add(new Label { Text = "Font:", Location = new Point(180, 2), AutoSize = true});
+                    rowElementPanel.Controls.Add(new Label
+                                                     {Text = "Font:", Location = new Point(180, 2), AutoSize = true});
                     var fontSelection = new ComboBox
                                             {
                                                 Name = "FontForRow_" + printWorkItem.Type + "_" + rownumber,
@@ -173,14 +157,14 @@ namespace PeterWibeck.ScrumyVSPlugin
                     fontSelection.SelectedItem = row.Font;
                     fontSelection.SelectedIndexChanged += FontSelectionSelectedIndexChanged;
                     rowElementPanel.Controls.Add(fontSelection);
-                    
+
                     var rowElementGridView = new DataGridView
-                                           {
-                                               Location = new Point(0, 23),
-                                               Size = new Size(450, 200),
-                                               Name = "DataGridRow_" + printWorkItem.Type + "_" + rownumber,
-                                               ScrollBars = ScrollBars.Both,
-                                           };
+                                                 {
+                                                     Location = new Point(0, 23),
+                                                     Size = new Size(450, 200),
+                                                     Name = "DataGridRow_" + printWorkItem.Type + "_" + rownumber,
+                                                     ScrollBars = ScrollBars.Both,
+                                                 };
 
                     rowElementGridView.CellValidated += RowElementGridViewOnCellValidated;
                     var typeColumn = new DataGridViewComboBoxColumn {Name = "Type", HeaderText = "Type"};
@@ -188,11 +172,28 @@ namespace PeterWibeck.ScrumyVSPlugin
                     typeColumn.Items.Add(RowElementType.Field.ToString());
                     typeColumn.Items.Add(RowElementType.RelatedItem.ToString());
                     rowElementGridView.Columns.Add(typeColumn);
-                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn { Name = RowElementAttributes.MaxeLength.ToString(), HeaderText = RowElementAttributes.MaxeLength.ToString()});
-                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn { Name = RowElementAttributes.DateFormat.ToString(), HeaderText = RowElementAttributes.DateFormat.ToString() });
-                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn { Name = RowElementAttributes.Text.ToString(), HeaderText = RowElementAttributes.Text.ToString() });
+                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn
+                                                       {
+                                                           Name = RowElementAttributes.MaxeLength.ToString(),
+                                                           HeaderText = RowElementAttributes.MaxeLength.ToString()
+                                                       });
+                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn
+                                                       {
+                                                           Name = RowElementAttributes.DateFormat.ToString(),
+                                                           HeaderText = RowElementAttributes.DateFormat.ToString()
+                                                       });
+                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn
+                                                       {
+                                                           Name = RowElementAttributes.Text.ToString(),
+                                                           HeaderText = RowElementAttributes.Text.ToString()
+                                                       });
 
-                    var fieldColumn = new DataGridViewComboBoxColumn { Name = RowElementAttributes.Field.ToString(), HeaderText = RowElementAttributes.Field.ToString(), Width = 200 };
+                    var fieldColumn = new DataGridViewComboBoxColumn
+                                          {
+                                              Name = RowElementAttributes.Field.ToString(),
+                                              HeaderText = RowElementAttributes.Field.ToString(),
+                                              Width = 200
+                                          };
                     foreach (FieldDefinition field in tfsHelper.FieldDefinitions)
                     {
                         fieldColumn.Items.Add(field.ReferenceName);
@@ -200,7 +201,12 @@ namespace PeterWibeck.ScrumyVSPlugin
                     fieldColumn.Items.Add("N/A");
                     rowElementGridView.Columns.Add(fieldColumn);
 
-                    var searchFieldColumn = new DataGridViewComboBoxColumn { Name = RowElementAttributes.SearchField.ToString(), HeaderText = RowElementAttributes.SearchField.ToString(), Width = 200 };
+                    var searchFieldColumn = new DataGridViewComboBoxColumn
+                                                {
+                                                    Name = RowElementAttributes.SearchField.ToString(),
+                                                    HeaderText = RowElementAttributes.SearchField.ToString(),
+                                                    Width = 200
+                                                };
                     foreach (FieldDefinition field in tfsHelper.FieldDefinitions)
                     {
                         searchFieldColumn.Items.Add(field.ReferenceName);
@@ -208,9 +214,18 @@ namespace PeterWibeck.ScrumyVSPlugin
                     searchFieldColumn.Items.Add("N/A");
                     rowElementGridView.Columns.Add(searchFieldColumn);
 
-                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn { Name = RowElementAttributes.SearchData.ToString(), HeaderText = RowElementAttributes.SearchData.ToString() });
+                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn
+                                                       {
+                                                           Name = RowElementAttributes.SearchData.ToString(),
+                                                           HeaderText = RowElementAttributes.SearchData.ToString()
+                                                       });
 
-                    var resultFieldColumn = new DataGridViewComboBoxColumn { Name = RowElementAttributes.ResultField.ToString(), HeaderText = RowElementAttributes.ResultField.ToString(), Width = 200 };
+                    var resultFieldColumn = new DataGridViewComboBoxColumn
+                                                {
+                                                    Name = RowElementAttributes.ResultField.ToString(),
+                                                    HeaderText = RowElementAttributes.ResultField.ToString(),
+                                                    Width = 200
+                                                };
                     foreach (FieldDefinition field in tfsHelper.FieldDefinitions)
                     {
                         resultFieldColumn.Items.Add(field.ReferenceName);
@@ -225,19 +240,26 @@ namespace PeterWibeck.ScrumyVSPlugin
                         var rowElementText = element as RowElementText;
                         if (rowElementText != null)
                         {
-                            rowElementGridView.Rows.Add(RowElementType.Text.ToString(), element.MaxLength, element.DateFormatting, rowElementText.Data, "","","","");
+                            rowElementGridView.Rows.Add(RowElementType.Text.ToString(), element.MaxLength,
+                                                        element.DateFormatting, rowElementText.Data, "", "", "", "");
                         }
 
                         var rowElementField = element as RowElementField;
                         if (rowElementField != null)
                         {
-                            rowElementGridView.Rows.Add(RowElementType.Field.ToString(), element.MaxLength, element.DateFormatting, "", rowElementField.FieldName, "", "", "");
+                            rowElementGridView.Rows.Add(RowElementType.Field.ToString(), element.MaxLength,
+                                                        element.DateFormatting, "", rowElementField.FieldName, "", "",
+                                                        "");
                         }
 
                         var rowElementRelatedItem = element as RowElementRelatedItem;
                         if (rowElementRelatedItem != null)
                         {
-                            rowElementGridView.Rows.Add(RowElementType.RelatedItem.ToString(), element.MaxLength, element.DateFormatting, "", "", rowElementRelatedItem.SearchField, rowElementRelatedItem.SearcData, rowElementRelatedItem.ResultField);
+                            rowElementGridView.Rows.Add(RowElementType.RelatedItem.ToString(), element.MaxLength,
+                                                        element.DateFormatting, "", "",
+                                                        rowElementRelatedItem.SearchField,
+                                                        rowElementRelatedItem.SearcData,
+                                                        rowElementRelatedItem.ResultField);
                         }
                     }
 
@@ -294,7 +316,7 @@ namespace PeterWibeck.ScrumyVSPlugin
             }
         }
 
-        void AlignmentSelectionSelectedIndexChanged(object sender, EventArgs e)
+        private void AlignmentSelectionSelectedIndexChanged(object sender, EventArgs e)
         {
             var comboBox = sender as ComboBox;
             if (comboBox == null)
@@ -314,7 +336,7 @@ namespace PeterWibeck.ScrumyVSPlugin
         private void FontSelectionSelectedIndexChanged(object sender, EventArgs e)
         {
             var comboBox = sender as ComboBox;
-            if (comboBox == null) 
+            if (comboBox == null)
                 return;
 
             int row = int.Parse(comboBox.Name.Split('_')[2]);
@@ -329,10 +351,10 @@ namespace PeterWibeck.ScrumyVSPlugin
         }
 
         private void RowElementGridViewOnCellValidated(object sender,
-                                                  DataGridViewCellEventArgs dataGridViewCellValidatingEventArgs)
+                                                       DataGridViewCellEventArgs dataGridViewCellValidatingEventArgs)
         {
             var grid = sender as DataGridView;
-            if(grid == null)
+            if (grid == null)
                 return;
 
             if (grid.Columns[dataGridViewCellValidatingEventArgs.ColumnIndex].Name.Equals("Type"))
@@ -358,40 +380,51 @@ namespace PeterWibeck.ScrumyVSPlugin
                 {
                     rowElement = new RowElementText();
                     int maxLenght;
-                    if(int.TryParse(GetValueForColumn(row, grid, RowElementAttributes.MaxeLength.ToString()), out maxLenght))
+                    if (int.TryParse(GetValueForColumn(row, grid, RowElementAttributes.MaxeLength.ToString()),
+                                     out maxLenght))
                     {
                         rowElement.MaxLength = maxLenght;
                     }
 
-                    ((RowElementText)rowElement).Data = GetValueForColumn(row, grid, RowElementAttributes.Text.ToString());
+                    ((RowElementText) rowElement).Data = GetValueForColumn(row, grid,
+                                                                           RowElementAttributes.Text.ToString());
                 }
 
                 if (type.Equals(RowElementType.Field.ToString()))
                 {
                     rowElement = new RowElementField();
                     int maxLenght;
-                    if (int.TryParse(GetValueForColumn(row, grid, RowElementAttributes.MaxeLength.ToString()), out maxLenght))
+                    if (int.TryParse(GetValueForColumn(row, grid, RowElementAttributes.MaxeLength.ToString()),
+                                     out maxLenght))
                     {
                         rowElement.MaxLength = maxLenght;
                     }
 
                     rowElement.DateFormatting = GetValueForColumn(row, grid, RowElementAttributes.DateFormat.ToString());
-                    ((RowElementField)rowElement).FieldName = GetValueForColumn(row, grid, RowElementAttributes.Field.ToString());
+                    ((RowElementField) rowElement).FieldName = GetValueForColumn(row, grid,
+                                                                                 RowElementAttributes.Field.ToString());
                 }
 
                 if (type.Equals(RowElementType.RelatedItem.ToString()))
                 {
                     rowElement = new RowElementRelatedItem();
                     int maxLenght;
-                    if (int.TryParse(GetValueForColumn(row, grid, RowElementAttributes.MaxeLength.ToString()), out maxLenght))
+                    if (int.TryParse(GetValueForColumn(row, grid, RowElementAttributes.MaxeLength.ToString()),
+                                     out maxLenght))
                     {
                         rowElement.MaxLength = maxLenght;
                     }
 
                     rowElement.DateFormatting = GetValueForColumn(row, grid, RowElementAttributes.DateFormat.ToString());
-                    ((RowElementRelatedItem)rowElement).SearchField = GetValueForColumn(row, grid, RowElementAttributes.SearchField.ToString());
-                    ((RowElementRelatedItem)rowElement).SearcData = GetValueForColumn(row, grid, RowElementAttributes.SearchData.ToString());
-                    ((RowElementRelatedItem)rowElement).ResultField = GetValueForColumn(row, grid, RowElementAttributes.ResultField.ToString());
+                    ((RowElementRelatedItem) rowElement).SearchField = GetValueForColumn(row, grid,
+                                                                                         RowElementAttributes.
+                                                                                             SearchField.ToString());
+                    ((RowElementRelatedItem) rowElement).SearcData = GetValueForColumn(row, grid,
+                                                                                       RowElementAttributes.SearchData.
+                                                                                           ToString());
+                    ((RowElementRelatedItem) rowElement).ResultField = GetValueForColumn(row, grid,
+                                                                                         RowElementAttributes.
+                                                                                             ResultField.ToString());
                 }
 
                 rowData.RowElements.Add(rowElement);
@@ -452,7 +485,7 @@ namespace PeterWibeck.ScrumyVSPlugin
                         cell.ReadOnly = false;
                     }
                 }
-                
+
                 if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.Field.ToString()))
                 {
                     if (type.Equals(RowElementType.Field.ToString()))
@@ -573,13 +606,13 @@ namespace PeterWibeck.ScrumyVSPlugin
         private static void RowLableLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             var label = sender as LinkLabel;
-            if (label == null) 
+            if (label == null)
                 return;
 
-            var row = int.Parse(label.Name.Split('_')[1]);
+            int row = int.Parse(label.Name.Split('_')[1]);
 
             // Find first row link postion
-            var startY =
+            int startY =
                 (from Control s in label.Parent.Controls where s.Name.Equals("RowLink_0") select s.Location.Y).
                     FirstOrDefault();
 
@@ -590,8 +623,8 @@ namespace PeterWibeck.ScrumyVSPlugin
                     where s.Name.StartsWith("RowLink_") && !s.Name.Equals("RowLink_0")
                     select s)
             {
-                var rowNumber = int.Parse(s.Name.Split('_')[1]);
-                s.Location = new Point(s.Location.X, startY + (rowNumber * 20));
+                int rowNumber = int.Parse(s.Name.Split('_')[1]);
+                s.Location = new Point(s.Location.X, startY + (rowNumber*20));
             }
 
             // Set new positions
@@ -604,7 +637,7 @@ namespace PeterWibeck.ScrumyVSPlugin
 
                 if (s.Name.StartsWith("RowLink_"))
                 {
-                    var rowNumber = int.Parse(s.Name.Split('_')[1]);
+                    int rowNumber = int.Parse(s.Name.Split('_')[1]);
                     if (row < rowNumber)
                     {
                         s.Location = new Point(s.Location.X, s.Location.Y + 220);
@@ -774,5 +807,31 @@ namespace PeterWibeck.ScrumyVSPlugin
                 BuildTabs();
             }
         }
+
+        #region Nested type: RowElementAttributes
+
+        private enum RowElementAttributes
+        {
+            MaxeLength,
+            Text,
+            Field,
+            DateFormat,
+            SearchField,
+            SearchData,
+            ResultField
+        }
+
+        #endregion
+
+        #region Nested type: RowElementType
+
+        private enum RowElementType
+        {
+            Text,
+            Field,
+            RelatedItem
+        }
+
+        #endregion
     }
 }
