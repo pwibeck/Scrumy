@@ -1,3 +1,0 @@
-syntax: glob
-*ScrumyVSPlugin*/bin/*
-*ScrumyVSPlugin*/obj/*
