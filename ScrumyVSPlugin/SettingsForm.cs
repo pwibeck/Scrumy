@@ -95,83 +95,6 @@ namespace PeterWibeck.ScrumyVSPlugin
             }
         }
 
-        private void AlignmentSelectionSelectedIndexChanged(object sender, EventArgs e)
-        {
-            var comboBox = sender as ComboBox;
-            if (comboBox == null)
-                return;
-
-            int row = int.Parse(comboBox.Name.Split('_')[2]);
-            string itemType = comboBox.Name.Split('_')[1];
-            WorkItemPrintData item =
-                Settings.PrintWorkItems.FirstOrDefault(workItemPrintData => workItemPrintData.Type.Equals(itemType));
-
-            if (item != null)
-            {
-                item.Rows[row].Alignment = comboBox.SelectedItem.ToString();
-            }
-        }
-
-        private void FontSelectionSelectedIndexChanged(object sender, EventArgs e)
-        {
-            var comboBox = sender as ComboBox;
-            if (comboBox == null)
-                return;
-
-            int row = int.Parse(comboBox.Name.Split('_')[2]);
-            string itemType = comboBox.Name.Split('_')[1];
-            WorkItemPrintData item =
-                Settings.PrintWorkItems.FirstOrDefault(workItemPrintData => workItemPrintData.Type.Equals(itemType));
-
-            if (item != null)
-            {
-                item.Rows[row].Font = comboBox.SelectedItem.ToString();
-            }
-        }
-
-        private static void RowLableLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            var label = sender as LinkLabel;
-            if (label == null)
-                return;
-
-            int row = int.Parse(label.Name.Split('_')[1]);
-
-            // Find first row link postion
-            int startY =
-                (from Control s in label.Parent.Controls where s.Name.Equals("RowLink_0") select s.Location.Y).
-                    FirstOrDefault();
-
-            // Reset row link positions
-            foreach (
-                Control s in
-                    from Control s in label.Parent.Controls
-                    where s.Name.StartsWith("RowLink_") && !s.Name.Equals("RowLink_0")
-                    select s)
-            {
-                int rowNumber = int.Parse(s.Name.Split('_')[1]);
-                s.Location = new Point(s.Location.X, startY + (rowNumber*20));
-            }
-
-            // Set new positions
-            foreach (Control s in label.Parent.Controls)
-            {
-                if (s.Name.StartsWith("RowElementPanel_"))
-                {
-                    s.Visible = s.Name.EndsWith("_" + row);
-                }
-
-                if (s.Name.StartsWith("RowLink_"))
-                {
-                    int rowNumber = int.Parse(s.Name.Split('_')[1]);
-                    if (row < rowNumber)
-                    {
-                        s.Location = new Point(s.Location.X, s.Location.Y + 220);
-                    }
-                }
-            }
-        }
-
         private void ChangeFontButtonClick(object sender, EventArgs e)
         {
             var button = (Button) sender;
@@ -199,36 +122,7 @@ namespace PeterWibeck.ScrumyVSPlugin
                 }
             }
         }
-
-        private void PickColorButtonClick(object sender, EventArgs e)
-        {
-            var button = (Button) sender;
-
-            string[] nameSplited = button.Name.Split('_');
-            WorkItemPrintData workItem =
-                Settings.PrintWorkItems.Where(item => item.Type.Equals(nameSplited[0])).
-                    ToArray()[0];
-            TabPage tabPage =
-                TabControl.TabPages.Cast<TabPage>().Where(page => page.Name.Equals(nameSplited[0])).ToArray()[0];
-
-            foreach (Control control in tabPage.Controls)
-            {
-                if (control.Name.Equals("TextColorPanel") && nameSplited[1].Equals("TEXT"))
-                {
-                    ChangeColor((Panel) control);
-                    workItem.TextColor = control.BackColor.ToArgb();
-                    break;
-                }
-
-                if (control.Name.Equals("BGColorPanel") && nameSplited[1].Equals("BG"))
-                {
-                    ChangeColor((Panel) control);
-                    workItem.BackGroundColor = control.BackColor.ToArgb();
-                    break;
-                }
-            }
-        }
-
+        
         private void BtnOkClick(object sender, EventArgs e)
         {
             var copyOfSettings = new Settings();
@@ -312,15 +206,6 @@ namespace PeterWibeck.ScrumyVSPlugin
             Close();
         }
 
-        private void ChangeColor(Panel panel)
-        {
-            colorDialog1.Color = panel.BackColor;
-            if (colorDialog1.ShowDialog() == DialogResult.OK)
-            {
-                panel.BackColor = colorDialog1.Color;
-            }
-        }
-
         private void BtnResetClick(object sender, EventArgs e)
         {
             if (
@@ -333,31 +218,5 @@ namespace PeterWibeck.ScrumyVSPlugin
                 BuildTabs();
             }
         }
-
-        #region Nested type: RowElementAttributes
-
-        private enum RowElementAttributes
-        {
-            MaxeLength,
-            Text,
-            Field,
-            DateFormat,
-            SearchField,
-            SearchData,
-            ResultField
-        }
-
-        #endregion
-
-        #region Nested type: RowElementType
-
-        private enum RowElementType
-        {
-            Text,
-            Field,
-            RelatedItem
-        }
-
-        #endregion
     }
 }

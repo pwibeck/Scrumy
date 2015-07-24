@@ -13,19 +13,15 @@ namespace PeterWibeck.ScrumyVSPlugin
 
     public partial class RowItem : UserControl
     {
-        private readonly Row row;
-
-        private readonly int rowNumber;
-
         private readonly Dictionary<string, Font> fonts;
 
         private readonly TfsHelper tfsHelper;
 
-        public RowItem(Row row, int rowNumber, Dictionary<string, Font> fonts, TfsHelper tfsHelper)
+        public Row Row { get; set; }
+
+        public RowItem(Dictionary<string, Font> fonts, TfsHelper tfsHelper)
         {
             this.InitializeComponent();
-            this.row = row;
-            this.rowNumber = rowNumber;
             this.fonts = fonts;
             this.tfsHelper = tfsHelper;
             this.RenderRow();
@@ -33,15 +29,14 @@ namespace PeterWibeck.ScrumyVSPlugin
 
         private void RenderRow()
         {
-            this.RowLabel.Text = "Row " + this.rowNumber;
-            this.AligmentSelection.SelectedItem = this.row.Alignment;
+            this.AligmentSelection.SelectedItem = this.Row.Alignment;
 
             foreach (var font in this.fonts)
             {
                 this.FontSelection.Items.Add(font.Key);
             }
 
-            this.FontSelection.SelectedItem = this.row.Font;
+            this.FontSelection.SelectedItem = this.Row.Font;
 
             this.AddColumnsToGrid();
             AddDataToGrid();
@@ -118,7 +113,7 @@ namespace PeterWibeck.ScrumyVSPlugin
 
         private void AddDataToGrid()
         {
-            foreach (IRowElement element in this.row.RowElements)
+            foreach (IRowElement element in this.Row.RowElements)
             {
                 var rowElementText = element as RowElementText;
                 if (rowElementText != null)
@@ -151,12 +146,7 @@ namespace PeterWibeck.ScrumyVSPlugin
                 FormatRowElementGrid(i, this.RowElements);
             }
         }
-
-        private void RowLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            RowPanel.Visible = !RowPanel.Visible;
-        }
-
+        
         #region Nested type: RowElementAttributes
 
         private enum RowElementAttributes

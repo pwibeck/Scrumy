@@ -36,7 +36,7 @@
             this.TextColorPanel = new System.Windows.Forms.Panel();
             this.TextColorLabel = new System.Windows.Forms.Label();
             this.LayoutLabel = new System.Windows.Forms.Label();
-            this.RowDataPanel = new System.Windows.Forms.Panel();
+            this.RowTabController = new System.Windows.Forms.TabControl();
             this.SuspendLayout();
             // 
             // BackgroundColorLabel
@@ -101,18 +101,19 @@
             this.LayoutLabel.TabIndex = 6;
             this.LayoutLabel.Text = "Layout";
             // 
-            // RowDataPanel
+            // RowTabController
             // 
-            this.RowDataPanel.Location = new System.Drawing.Point(9, 93);
-            this.RowDataPanel.Name = "RowDataPanel";
-            this.RowDataPanel.Size = new System.Drawing.Size(587, 220);
-            this.RowDataPanel.TabIndex = 7;
+            this.RowTabController.Location = new System.Drawing.Point(9, 93);
+            this.RowTabController.Name = "RowTabController";
+            this.RowTabController.SelectedIndex = 0;
+            this.RowTabController.Size = new System.Drawing.Size(601, 252);
+            this.RowTabController.TabIndex = 7;
             // 
             // WorkItemTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.RowDataPanel);
+            this.Controls.Add(this.RowTabController);
             this.Controls.Add(this.LayoutLabel);
             this.Controls.Add(this.ChangeTextColor);
             this.Controls.Add(this.TextColorPanel);
@@ -137,6 +138,6 @@
         private System.Windows.Forms.Panel TextColorPanel;
         private System.Windows.Forms.Label TextColorLabel;
         private System.Windows.Forms.Label LayoutLabel;
-        private System.Windows.Forms.Panel RowDataPanel;
+        private System.Windows.Forms.TabControl RowTabController;
     }
 }

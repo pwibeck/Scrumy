@@ -6,9 +6,6 @@ namespace PeterWibeck.ScrumyVSPlugin
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-
-    using Microsoft.TeamFoundation.WorkItemTracking.Client;
-
     using PeterWibeck.ScrumyVSPlugin.TFS;
 
     public partial class WorkItemTab : UserControl
@@ -41,11 +38,18 @@ namespace PeterWibeck.ScrumyVSPlugin
             }
         }
 
+        private Collection<Row> rows;
+
         public Collection<Row> Rows
         {
+            get
+            {
+                return rows;
+            }
             set
             {
-                RenderRows(value);
+                rows = value;
+                RenderRows();
             }
         }
 
@@ -74,13 +78,15 @@ namespace PeterWibeck.ScrumyVSPlugin
             }
         }
 
-        private void RenderRows(Collection<Row> rows)
+        private void RenderRows()
         {
-            int rownumber = 0;
-            foreach (Row row in rows)
+            var rownumber = 0;
+            foreach (var row in rows)
             {
-                RowItem rowItem = new RowItem(row, rownumber, fonts, tfsHelper);
-                RowDataPanel.Controls.Add(rowItem);
+                var rowItem = new RowItem(fonts, tfsHelper) { Row = row };
+                var tab = new TabPage("Row " + rownumber);
+                tab.Controls.Add(rowItem);
+                RowTabController.TabPages.Add(tab);
                 rownumber++;
             }
         }
