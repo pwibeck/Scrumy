@@ -34,252 +34,31 @@ namespace PeterWibeck.ScrumyVSPlugin
             AdvanceDocument.Text = Settings.Document;
 
             TabControl.TabPages.Clear();
-            foreach (WorkItemPrintData printWorkItem in Settings.PrintWorkItems)
+            foreach (var printWorkItem in Settings.PrintWorkItems)
             {
                 var tab = new TabPage {Name = printWorkItem.Type, Text = printWorkItem.Type};
 
-                var backgroundColor = new Label
-                                          {
-                                              Name = "BGColor",
-                                              Text = "Background Color",
-                                              Location = new Point(6, 15),
-                                              Size = new Size(92, 13)
-                                          };
-                tab.Controls.Add(backgroundColor);
-
-                var backgroundColorPanel = new Panel
-                                               {
-                                                   Location = new Point(104, 7),
-                                                   Name = "BGColorPanel",
-                                                   Size = new Size(45, 22),
-                                                   BackColor = Color.FromArgb(printWorkItem.BackGroundColor)
-                                               };
-                tab.Controls.Add(backgroundColorPanel);
-
-                var changeBgColorButton = new Button
-                                              {
-                                                  Name = printWorkItem.Type + "_" + "BG",
-                                                  Text = "Change",
-                                                  Location = new Point(158, 6),
-                                                  Size = new Size(75, 23),
-                                                  UseVisualStyleBackColor = true
-                                              };
-                changeBgColorButton.Click += PickColorButtonClick;
-                tab.Controls.Add(changeBgColorButton);
-
-                var textColor = new Label
-                                    {
-                                        Name = "TextColor",
-                                        Text = "Text Color",
-                                        Location = new Point(6, 40),
-                                        Size = new Size(55, 13)
-                                    };
-                tab.Controls.Add(textColor);
-
-                var textColorPanel = new Panel
-                                         {
-                                             Location = new Point(66, 35),
-                                             Name = "TextColorPanel",
-                                             Size = new Size(45, 22),
-                                             BackColor = Color.FromArgb(printWorkItem.TextColor)
-                                         };
-                tab.Controls.Add(textColorPanel);
-
-                var changeTextColorButton = new Button
-                                                {
-                                                    Name = printWorkItem.Type + "_" + "TEXT",
-                                                    Text = "Change",
-                                                    Location = new Point(117, 35),
-                                                    Size = new Size(75, 23),
-                                                    UseVisualStyleBackColor = true
-                                                };
-                changeTextColorButton.Click += PickColorButtonClick;
-                tab.Controls.Add(changeTextColorButton);
-
-                var layoutLabel = new Label
-                                      {
-                                          Location = new Point(9, 60),
-                                          Text = "Layout",
-                                          Size = new Size(392, 13),
-                                          Font =
-                                              new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point,
-                                                       ((0)))
-                                      };
-                tab.Controls.Add(layoutLabel);
-
-
-                int rownumber = 0;
-                foreach (Row row in printWorkItem.Rows)
-                {
-                    var rowLable = new LinkLabel
-                                       {
-                                           Location = new Point(9, 80 + rownumber*20),
-                                           Text = string.Format("Row {0}", rownumber),
-                                           Size = new Size(400, 13),
-                                           Name = "RowLink_" + rownumber
-                                       };
-                    rowLable.LinkClicked += RowLableLinkClicked;
-                    tab.Controls.Add(rowLable);
-
-                    var rowElementPanel = new Panel
-                                              {
-                                                  Name = "RowElementPanel_" + printWorkItem.Type + "_" + rownumber,
-                                                  Location = new Point(9, 97 + rownumber*20),
-                                                  Size = new Size(500, 220),
-                                                  Visible = false
-                                              };
-                    tab.Controls.Add(rowElementPanel);
-
-                    rowElementPanel.Controls.Add(new Label
-                                                     {Text = "Alignment:", Location = new Point(0, 2), AutoSize = true});
-                    var alignmentSelection = new ComboBox
-                                                 {
-                                                     Name = "AlignmentForRow_" + printWorkItem.Type + "_" + rownumber,
-                                                     Location = new Point(55, 0),
-                                                 };
-                    alignmentSelection.Items.Add("Top");
-                    alignmentSelection.Items.Add("Bottom");
-                    alignmentSelection.SelectedItem = row.Alignment;
-                    alignmentSelection.SelectedIndexChanged += AlignmentSelectionSelectedIndexChanged;
-                    rowElementPanel.Controls.Add(alignmentSelection);
-
-                    rowElementPanel.Controls.Add(new Label
-                                                     {Text = "Font:", Location = new Point(180, 2), AutoSize = true});
-                    var fontSelection = new ComboBox
-                                            {
-                                                Name = "FontForRow_" + printWorkItem.Type + "_" + rownumber,
-                                                Location = new Point(220, 0),
-                                            };
-                    foreach (var font in Settings.Fonts)
-                    {
-                        fontSelection.Items.Add(font.Key);
-                    }
-                    fontSelection.SelectedItem = row.Font;
-                    fontSelection.SelectedIndexChanged += FontSelectionSelectedIndexChanged;
-                    rowElementPanel.Controls.Add(fontSelection);
-
-                    var rowElementGridView = new DataGridView
-                                                 {
-                                                     Location = new Point(0, 23),
-                                                     Size = new Size(500, 200),
-                                                     Name = "DataGridRow_" + printWorkItem.Type + "_" + rownumber,
-                                                     ScrollBars = ScrollBars.Both,
-                                                 };
-
-                    rowElementGridView.CellValidated += RowElementGridViewOnCellValidated;
-                    var typeColumn = new DataGridViewComboBoxColumn {Name = "Type", HeaderText = "Type"};
-                    typeColumn.Items.Add(RowElementType.Text.ToString());
-                    typeColumn.Items.Add(RowElementType.Field.ToString());
-                    typeColumn.Items.Add(RowElementType.RelatedItem.ToString());
-                    rowElementGridView.Columns.Add(typeColumn);
-                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn
-                                                       {
-                                                           Name = RowElementAttributes.MaxeLength.ToString(),
-                                                           HeaderText = RowElementAttributes.MaxeLength.ToString()
-                                                       });
-                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn
-                                                       {
-                                                           Name = RowElementAttributes.DateFormat.ToString(),
-                                                           HeaderText = RowElementAttributes.DateFormat.ToString()
-                                                       });
-                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn
-                                                       {
-                                                           Name = RowElementAttributes.Text.ToString(),
-                                                           HeaderText = RowElementAttributes.Text.ToString()
-                                                       });
-
-                    var fieldColumn = new DataGridViewComboBoxColumn
-                                          {
-                                              Name = RowElementAttributes.Field.ToString(),
-                                              HeaderText = RowElementAttributes.Field.ToString(),
-                                              Width = 200
-                                          };
-                    foreach (FieldDefinition field in tfsHelper.FieldDefinitions)
-                    {
-                        fieldColumn.Items.Add(field.ReferenceName);
-                    }
-                    fieldColumn.Items.Add("N/A");
-                    rowElementGridView.Columns.Add(fieldColumn);
-
-                    var searchFieldColumn = new DataGridViewComboBoxColumn
-                                                {
-                                                    Name = RowElementAttributes.SearchField.ToString(),
-                                                    HeaderText = RowElementAttributes.SearchField.ToString(),
-                                                    Width = 200
-                                                };
-                    foreach (FieldDefinition field in tfsHelper.FieldDefinitions)
-                    {
-                        searchFieldColumn.Items.Add(field.ReferenceName);
-                    }
-                    searchFieldColumn.Items.Add("N/A");
-                    rowElementGridView.Columns.Add(searchFieldColumn);
-
-                    rowElementGridView.Columns.Add(new DataGridViewTextBoxColumn
-                                                       {
-                                                           Name = RowElementAttributes.SearchData.ToString(),
-                                                           HeaderText = RowElementAttributes.SearchData.ToString()
-                                                       });
-
-                    var resultFieldColumn = new DataGridViewComboBoxColumn
-                                                {
-                                                    Name = RowElementAttributes.ResultField.ToString(),
-                                                    HeaderText = RowElementAttributes.ResultField.ToString(),
-                                                    Width = 200
-                                                };
-                    foreach (FieldDefinition field in tfsHelper.FieldDefinitions)
-                    {
-                        resultFieldColumn.Items.Add(field.ReferenceName);
-                    }
-                    resultFieldColumn.Items.Add("N/A");
-                    rowElementGridView.Columns.Add(resultFieldColumn);
-
-                    rowElementPanel.Controls.Add(rowElementGridView);
-
-                    foreach (IRowElement element in row.RowElements)
-                    {
-                        var rowElementText = element as RowElementText;
-                        if (rowElementText != null)
-                        {
-                            rowElementGridView.Rows.Add(RowElementType.Text.ToString(), element.MaxLength,
-                                                        element.DateFormatting, rowElementText.Data, "", "", "", "");
-                        }
-
-                        var rowElementField = element as RowElementField;
-                        if (rowElementField != null)
-                        {
-                            rowElementGridView.Rows.Add(RowElementType.Field.ToString(), element.MaxLength,
-                                                        element.DateFormatting, "", rowElementField.FieldName, "", "",
-                                                        "");
-                        }
-
-                        var rowElementRelatedItem = element as RowElementRelatedItem;
-                        if (rowElementRelatedItem != null)
-                        {
-                            rowElementGridView.Rows.Add(RowElementType.RelatedItem.ToString(), element.MaxLength,
-                                                        element.DateFormatting, "", "",
-                                                        rowElementRelatedItem.SearchField,
-                                                        rowElementRelatedItem.SearcData,
-                                                        rowElementRelatedItem.ResultField);
-                        }
-                    }
-
-                    for (int i = 0; i < rowElementGridView.Rows.Count; i++)
-                    {
-                        FormatRowElementGrid(i, rowElementGridView);
-                    }
-
-                    rownumber++;
-                }
-
+                var panel = new WorkItemTab(Settings.Fonts, tfsHelper)
+                                {
+                                    BackgroundColor = Color.FromArgb(printWorkItem.BackGroundColor),
+                                    TextColor = Color.FromArgb(printWorkItem.TextColor),
+                                    Rows = printWorkItem.Rows,
+                };
+                tab.Controls.Add(panel);
                 TabControl.TabPages.Add(tab);
                 tab.Refresh();
             }
-
-            TabControl.TabPages.Add(FontsTab);
+            
             TabControl.TabPages.Add(AdvancedTab);
+            
+            this.SetupFontTab();
+        }
 
+        private void SetupFontTab()
+        {
+            this.TabControl.TabPages.Add(this.FontsTab);
             int fontYPos = 30;
-            foreach (var font in Settings.Fonts)
+            foreach (var font in this.Settings.Fonts)
             {
                 var fontTextBox = new TextBox
                                       {
@@ -288,7 +67,7 @@ namespace PeterWibeck.ScrumyVSPlugin
                                           Size = new Size(100, 20),
                                           Text = font.Key
                                       };
-                FontsTab.Controls.Add(fontTextBox);
+                this.FontsTab.Controls.Add(fontTextBox);
 
                 var fontLabel = new Label
                                     {
@@ -298,7 +77,7 @@ namespace PeterWibeck.ScrumyVSPlugin
                                         Size = new Size(150, 13),
                                         Text = font.Value.Name + " " + font.Value.Size + " " + font.Value.Style
                                     };
-                FontsTab.Controls.Add(fontLabel);
+                this.FontsTab.Controls.Add(fontLabel);
 
                 var changeFontButton = new Button
                                            {
@@ -309,8 +88,8 @@ namespace PeterWibeck.ScrumyVSPlugin
                                                Text = "Change font",
                                                UseVisualStyleBackColor = true
                                            };
-                changeFontButton.Click += ChangeFontButtonClick;
-                FontsTab.Controls.Add(changeFontButton);
+                changeFontButton.Click += this.ChangeFontButtonClick;
+                this.FontsTab.Controls.Add(changeFontButton);
 
                 fontYPos += 30;
             }
@@ -347,259 +126,6 @@ namespace PeterWibeck.ScrumyVSPlugin
             if (item != null)
             {
                 item.Rows[row].Font = comboBox.SelectedItem.ToString();
-            }
-        }
-
-        private void RowElementGridViewOnCellValidated(object sender,
-                                                       DataGridViewCellEventArgs dataGridViewCellValidatingEventArgs)
-        {
-            var grid = sender as DataGridView;
-            if (grid == null)
-                return;
-
-            if (grid.Columns[dataGridViewCellValidatingEventArgs.ColumnIndex].Name.Equals("Type"))
-            {
-                FormatRowElementGrid(dataGridViewCellValidatingEventArgs.RowIndex, grid);
-            }
-
-            string itemType = grid.Name.Split('_')[1];
-            int rowNumber = int.Parse(grid.Name.Split('_')[2]);
-            WorkItemPrintData item =
-                Settings.PrintWorkItems.FirstOrDefault(workItemPrintData => workItemPrintData.Type.Equals(itemType));
-            if (item == null)
-                return;
-
-            Row rowData = item.Rows[rowNumber];
-            rowData.RowElements.Clear();
-            foreach (DataGridViewRow row in grid.Rows)
-            {
-                string type = GetValueForColumn(row, grid, "Type");
-
-                IRowElement rowElement = null;
-                if (type.Equals(RowElementType.Text.ToString()))
-                {
-                    rowElement = new RowElementText();
-                    int maxLenght;
-                    if (int.TryParse(GetValueForColumn(row, grid, RowElementAttributes.MaxeLength.ToString()),
-                                     out maxLenght))
-                    {
-                        rowElement.MaxLength = maxLenght;
-                    }
-
-                    ((RowElementText) rowElement).Data = GetValueForColumn(row, grid,
-                                                                           RowElementAttributes.Text.ToString());
-                }
-
-                if (type.Equals(RowElementType.Field.ToString()))
-                {
-                    rowElement = new RowElementField();
-                    int maxLenght;
-                    if (int.TryParse(GetValueForColumn(row, grid, RowElementAttributes.MaxeLength.ToString()),
-                                     out maxLenght))
-                    {
-                        rowElement.MaxLength = maxLenght;
-                    }
-
-                    rowElement.DateFormatting = GetValueForColumn(row, grid, RowElementAttributes.DateFormat.ToString());
-                    ((RowElementField) rowElement).FieldName = GetValueForColumn(row, grid,
-                                                                                 RowElementAttributes.Field.ToString());
-                }
-
-                if (type.Equals(RowElementType.RelatedItem.ToString()))
-                {
-                    rowElement = new RowElementRelatedItem();
-                    int maxLenght;
-                    if (int.TryParse(GetValueForColumn(row, grid, RowElementAttributes.MaxeLength.ToString()),
-                                     out maxLenght))
-                    {
-                        rowElement.MaxLength = maxLenght;
-                    }
-
-                    rowElement.DateFormatting = GetValueForColumn(row, grid, RowElementAttributes.DateFormat.ToString());
-                    ((RowElementRelatedItem) rowElement).SearchField = GetValueForColumn(row, grid,
-                                                                                         RowElementAttributes.
-                                                                                             SearchField.ToString());
-                    ((RowElementRelatedItem) rowElement).SearcData = GetValueForColumn(row, grid,
-                                                                                       RowElementAttributes.SearchData.
-                                                                                           ToString());
-                    ((RowElementRelatedItem) rowElement).ResultField = GetValueForColumn(row, grid,
-                                                                                         RowElementAttributes.
-                                                                                             ResultField.ToString());
-                }
-
-                rowData.RowElements.Add(rowElement);
-            }
-        }
-
-        private static string GetValueForColumn(DataGridViewRow row, DataGridView grid, string column)
-        {
-            foreach (
-                DataGridViewCell cell in
-                    row.Cells.Cast<DataGridViewCell>().Where(
-                        cell => grid.Columns[cell.ColumnIndex].Name.Equals(column) && cell.Value != null))
-            {
-                return cell.Value.ToString();
-            }
-
-            return string.Empty;
-        }
-
-        private static void FormatRowElementGrid(int rowIndex, DataGridView grid)
-        {
-            string type = string.Empty;
-            foreach (
-                DataGridViewCell cell in
-                    grid.Rows[rowIndex].Cells.Cast<DataGridViewCell>().Where(
-                        cell => grid.Columns[cell.ColumnIndex].Name.Equals("Type") && cell.Value != null))
-            {
-                type = cell.Value.ToString();
-                break;
-            }
-
-
-            foreach (DataGridViewCell cell in grid.Rows[rowIndex].Cells)
-            {
-                if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.DateFormat.ToString()))
-                {
-                    if (type.Equals(RowElementType.Field.ToString()))
-                    {
-                        if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
-                        {
-                            cell.Value = string.Empty;
-                        }
-
-                        cell.ReadOnly = false;
-                    }
-                    else if (type.Equals(RowElementType.Text.ToString()))
-                    {
-                        cell.Value = "N/A";
-                        cell.ReadOnly = true;
-                    }
-                    else if (type.Equals(RowElementType.RelatedItem.ToString()))
-                    {
-                        if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
-                        {
-                            cell.Value = string.Empty;
-                        }
-
-                        cell.ReadOnly = false;
-                    }
-                }
-
-                if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.Field.ToString()))
-                {
-                    if (type.Equals(RowElementType.Field.ToString()))
-                    {
-                        if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
-                        {
-                            cell.Value = string.Empty;
-                        }
-
-                        cell.ReadOnly = false;
-                    }
-                    else if (type.Equals(RowElementType.Text.ToString()))
-                    {
-                        cell.Value = "N/A";
-                        cell.ReadOnly = true;
-                    }
-                    else if (type.Equals(RowElementType.RelatedItem.ToString()))
-                    {
-                        cell.Value = "N/A";
-                        cell.ReadOnly = true;
-                    }
-                }
-
-                if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.ResultField.ToString()))
-                {
-                    if (type.Equals(RowElementType.Field.ToString()))
-                    {
-                        cell.Value = "N/A";
-                        cell.ReadOnly = true;
-                    }
-                    else if (type.Equals(RowElementType.Text.ToString()))
-                    {
-                        cell.Value = "N/A";
-                        cell.ReadOnly = true;
-                    }
-                    else if (type.Equals(RowElementType.RelatedItem.ToString()))
-                    {
-                        if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
-                        {
-                            cell.Value = string.Empty;
-                        }
-
-                        cell.ReadOnly = false;
-                    }
-                }
-
-                if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.SearchData.ToString()))
-                {
-                    if (type.Equals(RowElementType.Field.ToString()))
-                    {
-                        cell.Value = "N/A";
-                        cell.ReadOnly = true;
-                    }
-                    else if (type.Equals(RowElementType.Text.ToString()))
-                    {
-                        cell.Value = "N/A";
-                        cell.ReadOnly = true;
-                    }
-                    else if (type.Equals(RowElementType.RelatedItem.ToString()))
-                    {
-                        if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
-                        {
-                            cell.Value = string.Empty;
-                        }
-
-                        cell.ReadOnly = false;
-                    }
-                }
-
-                if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.SearchField.ToString()))
-                {
-                    if (type.Equals(RowElementType.Field.ToString()))
-                    {
-                        cell.Value = "N/A";
-                        cell.ReadOnly = true;
-                    }
-                    else if (type.Equals(RowElementType.Text.ToString()))
-                    {
-                        cell.Value = "N/A";
-                        cell.ReadOnly = true;
-                    }
-                    else if (type.Equals(RowElementType.RelatedItem.ToString()))
-                    {
-                        if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
-                        {
-                            cell.Value = string.Empty;
-                        }
-
-                        cell.ReadOnly = false;
-                    }
-                }
-
-                if (grid.Columns[cell.ColumnIndex].Name.Equals(RowElementAttributes.Text.ToString()))
-                {
-                    if (type.Equals(RowElementType.Field.ToString()))
-                    {
-                        cell.Value = "N/A";
-                        cell.ReadOnly = true;
-                    }
-                    else if (type.Equals(RowElementType.Text.ToString()))
-                    {
-                        if (cell.Value != null && cell.Value.ToString().Equals("N/A"))
-                        {
-                            cell.Value = string.Empty;
-                        }
-
-                        cell.ReadOnly = false;
-                    }
-                    else if (type.Equals(RowElementType.RelatedItem.ToString()))
-                    {
-                        cell.Value = "N/A";
-                        cell.ReadOnly = true;
-                    }
-                }
             }
         }
 
