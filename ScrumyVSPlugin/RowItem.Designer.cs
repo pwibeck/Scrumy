@@ -42,27 +42,34 @@
             // 
             // RowElements
             // 
+            this.RowElements.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.RowElements.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.RowElements.Location = new System.Drawing.Point(12, 36);
+            this.RowElements.Location = new System.Drawing.Point(0, 29);
+            this.RowElements.Margin = new System.Windows.Forms.Padding(2);
             this.RowElements.Name = "RowElements";
             this.RowElements.RowTemplate.Height = 24;
-            this.RowElements.Size = new System.Drawing.Size(511, 168);
-            this.RowElements.TabIndex = 9;
+            this.RowElements.Size = new System.Drawing.Size(394, 142);
+            this.RowElements.TabIndex = 9;            
             // 
             // FontSelection
             // 
             this.FontSelection.FormattingEnabled = true;
-            this.FontSelection.Location = new System.Drawing.Point(242, 6);
+            this.FontSelection.Location = new System.Drawing.Point(182, 5);
+            this.FontSelection.Margin = new System.Windows.Forms.Padding(2);
             this.FontSelection.Name = "FontSelection";
-            this.FontSelection.Size = new System.Drawing.Size(113, 24);
+            this.FontSelection.Size = new System.Drawing.Size(86, 21);
             this.FontSelection.TabIndex = 8;
+            this.FontSelection.SelectedIndexChanged += new System.EventHandler(this.FontSelectedIndexChanged);
             // 
             // FontLabel
             // 
             this.FontLabel.AutoSize = true;
-            this.FontLabel.Location = new System.Drawing.Point(206, 10);
+            this.FontLabel.Location = new System.Drawing.Point(154, 8);
+            this.FontLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.FontLabel.Name = "FontLabel";
-            this.FontLabel.Size = new System.Drawing.Size(40, 17);
+            this.FontLabel.Size = new System.Drawing.Size(31, 13);
             this.FontLabel.TabIndex = 7;
             this.FontLabel.Text = "Font:";
             // 
@@ -72,31 +79,35 @@
             this.AligmentSelection.Items.AddRange(new object[] {
             "Top",
             "Bottom"});
-            this.AligmentSelection.Location = new System.Drawing.Point(79, 6);
+            this.AligmentSelection.Location = new System.Drawing.Point(59, 5);
+            this.AligmentSelection.Margin = new System.Windows.Forms.Padding(2);
             this.AligmentSelection.Name = "AligmentSelection";
-            this.AligmentSelection.Size = new System.Drawing.Size(121, 24);
+            this.AligmentSelection.Size = new System.Drawing.Size(92, 21);
             this.AligmentSelection.TabIndex = 6;
+            this.AligmentSelection.SelectedIndexChanged += new System.EventHandler(this.AligmentSelectedIndexChanged);
             // 
             // AlignmentLabel
             // 
             this.AlignmentLabel.AutoSize = true;
-            this.AlignmentLabel.Location = new System.Drawing.Point(9, 10);
+            this.AlignmentLabel.Location = new System.Drawing.Point(7, 8);
+            this.AlignmentLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.AlignmentLabel.Name = "AlignmentLabel";
-            this.AlignmentLabel.Size = new System.Drawing.Size(74, 17);
+            this.AlignmentLabel.Size = new System.Drawing.Size(56, 13);
             this.AlignmentLabel.TabIndex = 5;
             this.AlignmentLabel.Text = "Alignment:";
             // 
             // RowItem
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.RowElements);
             this.Controls.Add(this.FontSelection);
             this.Controls.Add(this.FontLabel);
             this.Controls.Add(this.AligmentSelection);
             this.Controls.Add(this.AlignmentLabel);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "RowItem";
-            this.Size = new System.Drawing.Size(526, 210);
+            this.Size = new System.Drawing.Size(394, 171);
             ((System.ComponentModel.ISupportInitialize)(this.RowElements)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -37,19 +37,23 @@ namespace PeterWibeck.ScrumyVSPlugin
                 this.TextColorPanel.BackColor = value;
             }
         }
-
-        private Collection<Row> rows;
-
+        
         public Collection<Row> Rows
         {
             get
             {
+                Collection<Row> rows = new Collection<Row>();
+                foreach (TabPage tab in RowTabController.TabPages)
+                {
+                    var rowItem = tab.Controls[0] as RowItem;
+                    rows.Add(rowItem.Row);
+                }
+
                 return rows;
             }
             set
             {
-                rows = value;
-                RenderRows();
+                RenderRows(value);
             }
         }
 
@@ -78,12 +82,13 @@ namespace PeterWibeck.ScrumyVSPlugin
             }
         }
 
-        private void RenderRows()
+        private void RenderRows(Collection<Row> rows)
         {
+            RowTabController.TabPages.Clear();
             var rownumber = 0;
             foreach (var row in rows)
             {
-                var rowItem = new RowItem(fonts, tfsHelper) { Row = row };
+                var rowItem = new RowItem(fonts, tfsHelper) { Row = row, Dock = DockStyle.Fill };
                 var tab = new TabPage("Row " + rownumber);
                 tab.Controls.Add(rowItem);
                 RowTabController.TabPages.Add(tab);

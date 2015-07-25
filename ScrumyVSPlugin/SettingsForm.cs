@@ -39,10 +39,14 @@ namespace PeterWibeck.ScrumyVSPlugin
                 var tab = new TabPage {Name = printWorkItem.Type, Text = printWorkItem.Type};
 
                 var panel = new WorkItemTab(Settings.Fonts, tfsHelper)
-                                {
-                                    BackgroundColor = Color.FromArgb(printWorkItem.BackGroundColor),
-                                    TextColor = Color.FromArgb(printWorkItem.TextColor),
-                                    Rows = printWorkItem.Rows,
+                {
+                    BackgroundColor = Color.FromArgb(printWorkItem.BackGroundColor),
+                    TextColor = Color.FromArgb(printWorkItem.TextColor),
+                    Rows = printWorkItem.Rows,
+                    Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top,
+                    AutoSize = true,
+                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                    Dock = DockStyle.Fill
                 };
                 tab.Controls.Add(panel);
                 TabControl.TabPages.Add(tab);
@@ -134,13 +138,15 @@ namespace PeterWibeck.ScrumyVSPlugin
                 // Copy work item data to copy of settings
                 foreach (WorkItemPrintData printWorkItem in copyOfSettings.PrintWorkItems)
                 {
-                    foreach (
-                        WorkItemPrintData setting in
-                            Settings.PrintWorkItems.Where(setting => printWorkItem.Type.Equals(setting.Type)))
+                    foreach (TabPage tab in TabControl.TabPages)
                     {
-                        printWorkItem.BackGroundColor = setting.BackGroundColor;
-                        printWorkItem.TextColor = setting.TextColor;
-                        printWorkItem.Rows = setting.Rows;
+                        if (tab.Name == printWorkItem.Type)
+                        {
+                            var workitem = tab.Controls[0] as WorkItemTab;
+                            printWorkItem.BackGroundColor = workitem.BackgroundColor.ToArgb();
+                            printWorkItem.TextColor = workitem.TextColor.ToArgb();
+                            printWorkItem.Rows = workitem.Rows;
+                        }
                     }
                 }
 
